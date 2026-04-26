@@ -826,7 +826,7 @@ function renderAddCards(which){
 }
 
 /* ---------- Apps Script Web App URL (handles writes + image upload) ---------- */
-const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxraIw9ca6jRAc48DGRavahcMSEFS_ahSzlZT72aUOlLkMij_sz-8wscR3F7V6CH5mE/exec";
+const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyX_xmkHRly_jo3LcwARQxeeoeYy0jd_NEzlshtRkbxlrZ9oo7H6RnUDksyuhNVIgDy/exec";
 
 function fileToBase64(file){
   return new Promise((resolve,reject)=>{
@@ -874,7 +874,8 @@ async function submitReservation(){
       headers: {'Content-Type':'text/plain;charset=utf-8'},
       body: JSON.stringify({
         rows,
-        file: { name: proof.name, mimeType: proof.type, data: fileData }
+        folderId: '1ofOMNCfh5kdYyMqMUD4Qgl5kR0X2Si7A',
+        file: { name: proof.name, mimeType: proof.type || 'image/jpeg', data: fileData }
       })
     });
   }catch(err){
