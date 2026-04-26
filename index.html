@@ -550,17 +550,7 @@ footer ul li a:hover{color:var(--primary)}
 /* ===========================================================
    CONFIG — set these to your own URLs
    =========================================================== */
-/* === Google Sheet sync ===
-   SHEET_ID    : the ID from your Google Sheet URL.
-   SHEET_NAME  : the tab name (default "Sheet1").
-   APPS_SCRIPT_URL : Web App URL from the Apps Script you deploy (see instructions
-                     at the bottom of this file). Used to WRITE new reservations.
-   The sheet must be shared as "Anyone with the link – Viewer" so the calendar
-   can READ occupied dates in real time via the gviz CSV endpoint. */
-const SHEET_ID = "1mXEJbzdOHjlrObqO3I5ehe6UigU18CEC6LAUAQ4NzDE";
-const SHEET_NAME = "Sheet1";
-const SHEET_CSV_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(SHEET_NAME)}&t=${Date.now()}`;
-const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxraIw9ca6jRAc48DGRavahcMSEFS_ahSzlZT72aUOlLkMij_sz-8wscR3F7V6CH5mE/exec";
+const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQoJScVH-CRoGLB_I5RIfFkzJNfGDwnpOpNPgP-9L45VjkRLPXZciKNh7np4quCYxPPc8TbCmCh3hFJ/pub?output=csv";
 const FB_PROFILE_URL = "https://www.facebook.com/"; // replace with your FB profile
 
 function openFB(){ window.open(FB_PROFILE_URL,'_blank'); }
@@ -711,8 +701,7 @@ function parseDateStr(s){
 }
 async function loadOccupied(){
   try{
-    const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(SHEET_NAME)}&t=${Date.now()}`;
-    const res = await fetch(url,{cache:'no-store'});
+    const res = await fetch(SHEET_CSV_URL,{cache:'no-store'});
     const txt = await res.text();
     const rows = parseCSV(txt).filter(r=>r.length>=4);
     const head = rows.shift().map(h=>h.trim().toLowerCase());
@@ -732,7 +721,7 @@ async function loadOccupied(){
   }
 }
 loadOccupied();
-setInterval(loadOccupied, 15000); // poll every 15s for real-time sync
+setInterval(loadOccupied, 60000);
 
 /* ---------- Calendar ---------- */
 function renderCalendar(){
@@ -836,16 +825,23 @@ function renderAddCards(which){
   });
 }
 
-/* ---------- Submit ---------- */
+/* ---------- Apps Script Web App URL (handles writes + image upload) ---------- */
+const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxraIw9ca6jRAc48DGRavahcMSEFS_ahSzlZT72aUOlLkMij_sz-8wscR3F7V6CH5mE/exec";
+
 function fileToBase64(file){
   return new Promise((resolve,reject)=>{
     const r = new FileReader();
-    r.onload = ()=>resolve(String(r.result).split(',')[1]||'');
+    r.onload = ()=>{
+      const s = r.result;
+      const i = s.indexOf(',');
+      resolve(i>=0 ? s.slice(i+1) : s);
+    };
     r.onerror = reject;
     r.readAsDataURL(file);
   });
 }
 
+/* ---------- Submit ---------- */
 async function submitReservation(){
   const fields=['fName','fMobile','fEmail','fAddress','ciTime','coTime'];
   for(const id of fields){
@@ -857,71 +853,55 @@ async function submitReservation(){
   if(!proof){ alert('Please attach proof of payment image.'); return; }
   if(!state.selected.length){ alert('Please add at least one room or cottage.'); return; }
 
-  const submitBtn = document.querySelector('#resModal .btn:not(.ghost)');
-  const originalText = submitBtn ? submitBtn.textContent : '';
-  if(submitBtn){ submitBtn.disabled = true; submitBtn.textContent = 'Submitting…'; }
-
-  const ciTime = document.getElementById('ciTime').value+' '+document.getElementById('ciAMPM').value;
-  const coTime = document.getElementById('coTime').value+' '+document.getElementById('coAMPM').value;
-
-  // Build one row per selected room (matches your sheet headers).
   const rows = state.selected.map(s=>({
     Rooms: s.name,
     Date: new Date().toLocaleDateString(),
-    'Check In':  state.ciDate.toLocaleDateString()+' '+ciTime,
-    'Check Out': state.coDate.toLocaleDateString()+' '+coTime,
-    Name:    document.getElementById('fName').value,
-    Mobile:  document.getElementById('fMobile').value,
-    Email:   document.getElementById('fEmail').value,
+    'Check In': state.ciDate.toLocaleDateString()+' '+document.getElementById('ciTime').value+' '+document.getElementById('ciAMPM').value,
+    'Check Out': state.coDate.toLocaleDateString()+' '+document.getElementById('coTime').value+' '+document.getElementById('coAMPM').value,
+    Name: document.getElementById('fName').value,
+    Mobile: document.getElementById('fMobile').value,
+    Email: document.getElementById('fEmail').value,
     Address: document.getElementById('fAddress').value,
-    File:    proof.name
+    File: proof.name
   }));
 
+  // Send to Google Sheet via Apps Script (image is uploaded to Drive and inserted as =IMAGE())
   try{
-    if(!APPS_SCRIPT_URL || APPS_SCRIPT_URL.startsWith('PASTE_')){
-      throw new Error('APPS_SCRIPT_URL is not configured. Deploy the Apps Script (instructions at the bottom of this file) and paste the Web App URL into APPS_SCRIPT_URL.');
-    }
-    const fileB64 = await fileToBase64(proof);
-    // Use text/plain to avoid CORS preflight on Apps Script Web Apps.
-    const payload = {
-      rows,
-      file: { name: proof.name, mimeType: proof.type || 'application/octet-stream', data: fileB64 }
-    };
-    const res = await fetch(APPS_SCRIPT_URL, {
+    const fileData = await fileToBase64(proof);
+    await fetch(APPS_SCRIPT_URL, {
       method: 'POST',
-      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-      body: JSON.stringify(payload)
+      mode: 'no-cors',
+      headers: {'Content-Type':'text/plain;charset=utf-8'},
+      body: JSON.stringify({
+        rows,
+        file: { name: proof.name, mimeType: proof.type, data: fileData }
+      })
     });
-    const out = await res.json().catch(()=>({ok:false,error:'Bad response from Apps Script'}));
-    if(!out.ok) throw new Error(out.error || 'Failed to save reservation');
-
-    // Optimistically mark dates as occupied locally; then refresh from sheet.
-    for(let d=new Date(state.ciDate); d<=state.coDate; d.setDate(d.getDate()+1)){
-      state.occupied.add(ymd(d));
-    }
-    renderCalendar();
-    loadOccupied(); // pull authoritative state right away
-
-    closeModal('resModal');
-    openModal('okModal');
-
-    // reset form
-    state.selected=[]; state.ciDate=null; state.coDate=null;
-    ['fName','fMobile','fEmail','fAddress','ciTime','coTime'].forEach(id=>document.getElementById(id).value='');
-    document.getElementById('fProof').value='';
-    document.getElementById('dInLbl').textContent='—';
-    document.getElementById('dOutLbl').textContent='—';
-    document.getElementById('tInLbl').textContent='—';
-    document.getElementById('tOutLbl').textContent='—';
-    renderSelected();
-  } catch(err){
-    console.error(err);
-    alert('Sorry, your reservation could not be saved.\n\n'+err.message);
-  } finally {
-    if(submitBtn){ submitBtn.disabled = false; submitBtn.textContent = originalText || 'Reserve'; }
+  }catch(err){
+    console.error('Sheet sync failed:', err);
+    alert('Could not sync to Google Sheet. Please try again.');
+    return;
   }
+
+  // Optimistically mark dates as occupied locally so the calendar reflects them
+  for(let d=new Date(state.ciDate); d<=state.coDate; d.setDate(d.getDate()+1)){
+    state.occupied.add(ymd(d));
+  }
+  renderCalendar();
+
+  closeModal('resModal');
+  openModal('okModal');
+
+  // reset form
+  state.selected=[]; state.ciDate=null; state.coDate=null;
+  ['fName','fMobile','fEmail','fAddress','ciTime','coTime'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('fProof').value='';
+  document.getElementById('dInLbl').textContent='—';
+  document.getElementById('dOutLbl').textContent='—';
+  document.getElementById('tInLbl').textContent='—';
+  document.getElementById('tOutLbl').textContent='—';
+  renderSelected();
 }
 </script>
 </body>
 </html>
-
