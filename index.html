@@ -862,7 +862,7 @@ async function submitReservation(){
     Mobile: document.getElementById('fMobile').value,
     Email: document.getElementById('fEmail').value,
     Address: document.getElementById('fAddress').value,
-    File: proof.name
+    File: '' // Apps Script will replace this with =IMAGE(driveUrl) after uploading the proof
   }));
 
   // Send to Google Sheet via Apps Script (image is uploaded to Drive and inserted as =IMAGE())
