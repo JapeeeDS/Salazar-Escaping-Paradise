@@ -1,0 +1,927 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Salazar Escaping Paradise — Marikaban Island Resort</title>
+<meta name="description" content="Escape to paradise in Marikaban Island, Tingloy, Batangas. Book rooms and cottages at Salazar Escaping Paradise — beachside comfort, snorkeling, and unforgettable memories." />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ---------- CONFIG ---------- */
+/* Replace these two URLs to point to YOUR Google Sheet:
+   1) SHEET_CSV_URL  - Published-to-web CSV link of the sheet
+      Headers expected: Rooms, Date, Check In, Check Out, Name, Mobile, Email, File
+   2) FB_PROFILE_URL - Facebook profile to open from Contact "Message" buttons
+*/
+/* ---------- DESIGN TOKENS ---------- */
+:root{
+  --primary:#E87722;       /* warm orange */
+  --primary-600:#d36617;
+  --navy:#1F3A57;          /* deep navy */
+  --navy-700:#152C45;
+  --bg:#FFFFFF;
+  --soft:#F4F1EC;
+  --muted:#6B7280;
+  --text:#1B1B1B;
+  --line:#E7E2D9;
+  --success:#16a34a;
+  --danger:#dc2626;
+  --shadow:0 10px 30px -12px rgba(0,0,0,.18);
+  --radius:12px;
+  --radius-lg:18px;
+  --container:1180px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:'Inter',system-ui,-apple-system,Segoe UI,Roboto,sans-serif;line-height:1.55;scroll-behavior:smooth}
+img{max-width:100%;display:block}
+h1,h2,h3,h4{font-family:'Playfair Display',Georgia,serif;color:var(--navy);margin:0 0 .5rem;line-height:1.2}
+a{color:inherit;text-decoration:none}
+.container{max-width:var(--container);margin:0 auto;padding:0 20px}
+
+/* ---------- HEADER ---------- */
+.header{position:sticky;top:0;z-index:60;backdrop-filter:saturate(160%) blur(10px);background:rgba(255,255,255,.92);border-bottom:1px solid var(--line);transition:background .2s}
+.header .row{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;max-width:var(--container);margin:0 auto}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800;color:var(--navy)}
+.brand .logo{width:36px;height:36px;border-radius:50%;background:var(--primary);color:#fff;display:grid;place-items:center;font-family:'Playfair Display',serif;font-weight:800}
+nav.main{display:flex;gap:26px}
+nav.main a{font-weight:500;color:#222;position:relative;padding:6px 2px}
+nav.main a.active,nav.main a:hover{color:var(--primary)}
+nav.main a.active::after{content:"";position:absolute;left:0;right:0;bottom:-6px;height:2px;background:var(--primary);border-radius:2px}
+.btn{display:inline-flex;align-items:center;gap:8px;background:var(--primary);color:#fff;border:none;cursor:pointer;font-weight:600;padding:10px 18px;border-radius:999px;transition:.15s transform,.15s background}
+.btn:hover{background:var(--primary-600)}
+.btn:active{transform:translateY(1px)}
+.btn.ghost{background:transparent;color:var(--navy);border:1px solid var(--line)}
+.btn.sm{padding:8px 14px;font-size:.9rem}
+.btn.block{width:100%;justify-content:center}
+.menu-toggle{display:none;background:none;border:none;font-size:24px;color:var(--navy);cursor:pointer}
+
+/* ---------- HERO ---------- */
+.hero{position:relative;min-height:88vh;display:flex;align-items:center;color:#fff;overflow:hidden}
+.hero::before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.35),rgba(0,0,0,.55)),url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1800&q=80') center/cover;}
+.hero .inner{position:relative;max-width:var(--container);margin:0 auto;padding:120px 20px 100px;width:100%}
+.hero .eyebrow{letter-spacing:.18em;text-transform:uppercase;font-size:.78rem;opacity:.9;margin-bottom:14px}
+.hero h1{font-size:clamp(2.2rem,5vw,4rem);color:#fff;margin-bottom:.4rem}
+.hero h1 span{color:var(--primary);display:block}
+.hero p{max-width:640px;font-size:1.05rem;opacity:.95;margin:1rem 0 1.6rem}
+
+/* feature strip */
+.feature-strip{background:var(--navy);color:#fff;display:grid;grid-template-columns:auto 1fr;align-items:center}
+.feature-strip .years{padding:30px 36px;display:flex;flex-direction:column;clip-path:polygon(0 0,100% 0,90% 100%,0% 100%);background:var(--navy-700);min-width:230px}
+.feature-strip .years b{font-size:2.2rem;font-family:'Playfair Display',serif;line-height:1}
+.feature-strip .years span{font-size:.85rem;opacity:.9;margin-top:4px}
+.feature-strip .items{display:flex;gap:34px;justify-content:center;flex-wrap:wrap;padding:18px 30px}
+.feature-strip .items .it{display:flex;gap:10px;align-items:center;font-size:.95rem}
+.feature-strip .items .ic{width:36px;height:36px;border-radius:50%;background:var(--primary);display:grid;place-items:center;color:#fff;font-weight:700}
+
+/* ---------- COMFORT SECTION ---------- */
+.comfort{padding:80px 0}
+.comfort .grid{display:grid;grid-template-columns:1fr 1fr;gap:50px;align-items:center}
+.comfort img{border-radius:var(--radius-lg);box-shadow:var(--shadow)}
+.comfort .eyebrow{color:var(--primary);font-weight:600;letter-spacing:.08em;text-transform:uppercase;font-size:.78rem;margin-bottom:8px}
+.comfort h2{font-size:2rem;margin-bottom:14px}
+.comfort ul{margin:14px 0 22px;padding:0;list-style:none}
+.comfort ul li{padding:6px 0 6px 22px;position:relative}
+.comfort ul li::before{content:"•";color:var(--primary);position:absolute;left:0;font-weight:700}
+
+/* ---------- SECTION TITLE ---------- */
+.section{padding:80px 0}
+.section.alt{background:var(--soft)}
+.section .head{text-align:center;margin-bottom:36px}
+.section .head h2{font-size:2rem}
+.section .head .underline{width:60px;height:3px;background:var(--primary);margin:8px auto 0;border-radius:3px}
+
+/* ---------- AMENITIES ---------- */
+.amenities-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.amenity{position:relative;border-radius:var(--radius);overflow:hidden;aspect-ratio:16/10;color:#fff;cursor:pointer}
+.amenity img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .5s}
+.amenity:hover img{transform:scale(1.06)}
+.amenity::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.05) 30%,rgba(0,0,0,.85))}
+.amenity .num{position:absolute;top:14px;left:16px;font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:700;z-index:2;color:var(--primary)}
+.amenity .info-i{position:absolute;top:14px;right:14px;width:28px;height:28px;border:1px solid rgba(255,255,255,.6);border-radius:50%;display:grid;place-items:center;font-size:.85rem;z-index:2}
+.amenity .meta{position:absolute;left:0;right:0;bottom:0;padding:16px;z-index:2}
+.amenity .meta h4{color:#fff;font-size:1.05rem;margin-bottom:4px}
+.amenity .meta p{font-size:.82rem;margin:0;opacity:.9}
+
+/* ---------- GALLERY ---------- */
+.gallery{background:var(--navy);color:#fff;padding:80px 0}
+.gallery .head h2{color:#fff}
+.gallery .stage{position:relative;max-width:900px;margin:0 auto;border-radius:var(--radius-lg);overflow:hidden;background:#000;aspect-ratio:16/9}
+.gallery .stage img{width:100%;height:100%;object-fit:cover;transition:opacity .35s}
+.gal-btn{position:absolute;top:50%;transform:translateY(-50%);width:46px;height:46px;border-radius:50%;border:none;background:rgba(255,255,255,.85);color:var(--navy);font-size:22px;cursor:pointer;display:grid;place-items:center;transition:.2s}
+.gal-btn:hover{background:#fff}
+.gal-btn.prev{left:14px}
+.gal-btn.next{right:14px}
+.thumbs{display:flex;gap:10px;justify-content:center;margin:18px 0 0;flex-wrap:wrap}
+.thumbs button{padding:0;border:2px solid transparent;border-radius:8px;overflow:hidden;background:none;cursor:pointer;width:84px;height:54px}
+.thumbs button.active{border-color:var(--primary)}
+.thumbs img{width:100%;height:100%;object-fit:cover}
+.dots{display:flex;justify-content:center;gap:8px;margin-top:14px}
+.dots .dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.4)}
+.dots .dot.active{background:var(--primary)}
+
+/* ---------- BOOK SECTION ---------- */
+.book h2{font-size:1.6rem;margin-bottom:8px}
+.tabs{display:flex;align-items:center;gap:6px;border-bottom:1px solid var(--line);margin:14px 0 22px}
+.tab{padding:8px 16px;border-radius:8px 8px 0 0;background:transparent;color:#444;border:none;cursor:pointer;font-weight:600;font-family:inherit;font-size:.95rem}
+.tab.active{background:var(--primary);color:#fff}
+.tab-sep{height:18px;width:1px;background:var(--line)}
+.lead{color:var(--muted);margin:0 0 18px}
+.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+.card{background:#fff;border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;display:flex;flex-direction:column}
+.card .img{position:relative;aspect-ratio:4/3;overflow:hidden;background:#eee}
+.card .img img{width:100%;height:100%;object-fit:cover}
+.badge{position:absolute;top:10px;left:10px;background:rgba(0,0,0,.55);color:#fff;border-radius:999px;font-size:.7rem;padding:4px 10px;letter-spacing:.04em}
+.card .body{padding:14px 14px 16px;display:flex;flex-direction:column;gap:10px;flex:1}
+.card h4{margin:0;font-family:'Inter',sans-serif;color:var(--text);font-weight:700}
+.specs{display:flex;flex-wrap:wrap;gap:8px;font-size:.82rem;color:#444}
+.spec{display:inline-flex;align-items:center;gap:6px;background:#fff7ef;border:1px solid #ffe2c7;color:#9a4b09;padding:3px 8px;border-radius:6px}
+.spec.dark{background:#fff;border-color:var(--line);color:#444}
+.price{margin-left:auto;color:var(--primary);font-weight:700}
+.row-between{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.card .actions{margin-top:auto;display:flex;justify-content:center;padding-top:6px}
+.card .actions .btn{min-width:140px;justify-content:center}
+
+/* ---------- CONTACT ---------- */
+.contact-grid{display:grid;grid-template-columns:1.1fr 1fr;gap:36px;align-items:start}
+.profiles{background:#fff;border:1px solid var(--line);border-radius:var(--radius-lg);padding:30px;display:flex;gap:30px;justify-content:space-around;flex-wrap:wrap}
+.person{text-align:center}
+.person .avatar{width:120px;height:120px;border-radius:50%;overflow:hidden;margin:0 auto 10px;border:4px solid #fff;box-shadow:var(--shadow);position:relative}
+.person .avatar img{width:100%;height:100%;object-fit:cover}
+.person .fb{position:absolute;bottom:4px;right:4px;background:#1877F2;color:#fff;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-size:.85rem;font-weight:700;border:2px solid #fff}
+.person h4{margin:8px 0 4px;font-family:'Inter',sans-serif;color:var(--text)}
+.person .num{color:var(--primary);font-weight:600;font-size:.9rem;margin-bottom:10px}
+.person .btn{padding:6px 18px;font-size:.85rem}
+.contact-info h3{font-size:1.4rem}
+.contact-info p{color:#555}
+.info-list{list-style:none;padding:0;margin:14px 0}
+.info-list li{display:flex;gap:10px;align-items:flex-start;padding:6px 0;color:#333}
+.info-list li .ic{width:30px;height:30px;border-radius:50%;background:#fff7ef;color:var(--primary);display:grid;place-items:center;font-size:.95rem;flex-shrink:0}
+.map{margin-top:14px;border-radius:var(--radius);overflow:hidden;border:1px solid var(--line)}
+.map iframe{display:block;width:100%;height:220px;border:0}
+
+/* ---------- FOOTER ---------- */
+footer{background:var(--navy);color:#cfd8e3;padding:50px 0 30px;margin-top:0}
+.foot-grid{display:grid;grid-template-columns:1.2fr 1fr 1.2fr auto;gap:30px;align-items:start}
+footer h5{color:#fff;margin:0 0 12px;font-family:'Inter',sans-serif;font-weight:700}
+footer ul{list-style:none;padding:0;margin:0}
+footer ul li{padding:4px 0;font-size:.92rem}
+footer ul li a:hover{color:var(--primary)}
+.foot-brand{display:flex;align-items:center;gap:10px}
+.years-badge{display:flex;align-items:center;gap:10px;color:#fff}
+.years-badge .circle{width:54px;height:54px;border-radius:50%;background:var(--primary);display:grid;place-items:center;font-weight:800;color:#fff;font-family:'Playfair Display',serif}
+.copy{border-top:1px solid rgba(255,255,255,.08);margin-top:30px;padding-top:18px;text-align:center;font-size:.82rem;color:#9aa7b6}
+
+/* ---------- MODAL ---------- */
+.modal{position:fixed;inset:0;background:rgba(8,15,28,.65);display:none;align-items:flex-start;justify-content:center;z-index:120;padding:30px 16px;overflow-y:auto}
+.modal.show{display:flex}
+.modal-card{background:#fff;border-radius:var(--radius-lg);max-width:880px;width:100%;box-shadow:var(--shadow);overflow:hidden;animation:pop .2s ease-out;margin:auto}
+@keyframes pop{from{transform:scale(.96);opacity:0}to{transform:scale(1);opacity:1}}
+.modal-head{background:var(--navy);color:#fff;padding:14px 22px;display:flex;align-items:center;justify-content:space-between}
+.modal-head h3{margin:0;color:#fff;font-family:'Inter',sans-serif;font-size:1rem;font-weight:700}
+.modal-head .x{background:none;border:none;color:#fff;font-size:22px;cursor:pointer}
+.modal-body{padding:22px 26px}
+.note{background:linear-gradient(90deg,#ffefe0,#ffe7d2);border-left:4px solid var(--primary);padding:10px 14px;border-radius:8px;margin:10px 0 16px;font-size:.9rem}
+.note .t{color:var(--primary);font-weight:700;margin-right:8px}
+.danger{color:var(--danger);font-weight:600}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+.field{display:flex;flex-direction:column;gap:6px;margin-bottom:12px}
+.field label{font-size:.85rem;color:#333;font-weight:500}
+.field input,.field select,.field textarea{font-family:inherit;font-size:.95rem;padding:9px 11px;border:1px solid var(--line);border-radius:8px;background:#fff;outline:none;transition:.15s}
+.field input:focus,.field select:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(232,119,34,.15)}
+.field .row-inline{display:flex;gap:8px}
+.field .row-inline input{flex:1}
+.field .row-inline select{width:80px}
+.cal-wrap{border:1px solid var(--line);border-radius:10px;padding:10px;background:#fff}
+.cal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.cal-head button{background:none;border:none;font-size:18px;color:var(--navy);cursor:pointer;padding:4px 8px;border-radius:6px}
+.cal-head button:hover{background:var(--soft)}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;text-align:center;font-size:.78rem}
+.cal-grid .dow{font-weight:700;color:var(--muted);padding:4px 0}
+.cal-grid .day{padding:6px 0;border-radius:6px;cursor:pointer;user-select:none}
+.cal-grid .day:hover:not(.dis):not(.occ){background:var(--soft)}
+.cal-grid .day.empty{visibility:hidden}
+.cal-grid .day.occ{background:#fde2e2;color:#9a1a1a;cursor:not-allowed;text-decoration:line-through}
+.cal-grid .day.dis{color:#bbb;cursor:not-allowed}
+.cal-grid .day.sel{background:var(--primary);color:#fff;font-weight:700}
+.cal-grid .day.in-range{background:#ffe2c7;color:#9a4b09}
+.legend{display:flex;gap:14px;font-size:.72rem;color:#666;margin-top:8px;flex-wrap:wrap}
+.legend .lg{display:inline-flex;align-items:center;gap:6px}
+.legend .sw{width:12px;height:12px;border-radius:3px;display:inline-block}
+.cal-foot{display:flex;justify-content:space-between;font-size:.8rem;color:#555;margin-top:8px;border-top:1px dashed var(--line);padding-top:6px}
+.selected-rooms{margin-top:14px;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.selected-rooms .h{background:var(--primary);color:#fff;padding:8px 12px;font-weight:600;font-size:.9rem;display:flex;justify-content:space-between;align-items:center}
+.selected-rooms table{width:100%;border-collapse:collapse;font-size:.88rem}
+.selected-rooms td{padding:8px 12px;border-bottom:1px solid var(--line)}
+.selected-rooms tr:last-child td{border-bottom:none}
+.selected-rooms .empty{padding:14px;color:var(--muted);text-align:center;font-size:.85rem}
+.selected-rooms .rm{background:none;border:none;color:var(--danger);cursor:pointer;font-size:1rem}
+.modal-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:18px}
+.add-btn{background:var(--primary);color:#fff;border:none;padding:6px 14px;border-radius:999px;cursor:pointer;font-weight:600;font-size:.85rem;display:inline-flex;align-items:center;gap:6px}
+.headline-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.headline-row .lead{margin:0}
+.required{color:var(--danger);margin-left:2px}
+
+/* success modal */
+.success{max-width:380px;text-align:center;padding:34px 26px}
+.success .check{width:74px;height:74px;border-radius:50%;background:var(--primary);color:#fff;display:grid;place-items:center;margin:0 auto 14px;font-size:38px}
+.success h3{font-family:'Playfair Display',serif;color:var(--primary);font-size:1.4rem}
+.success p{color:#444;font-size:.9rem;margin:8px 0 18px}
+
+/* mobile menu sheet */
+.mobile-menu{position:fixed;top:0;right:-300px;width:280px;height:100vh;background:#fff;box-shadow:var(--shadow);z-index:80;transition:right .25s;padding:80px 24px 24px;display:flex;flex-direction:column;gap:18px}
+.mobile-menu.open{right:0}
+.mobile-menu a{font-weight:600;color:var(--navy);font-size:1.05rem;padding:10px 0;border-bottom:1px solid var(--line)}
+.backdrop{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:70;display:none}
+.backdrop.show{display:block}
+
+/* ---------- RESPONSIVE ---------- */
+@media (max-width:1024px){
+  .cards{grid-template-columns:repeat(2,1fr)}
+  .amenities-grid{grid-template-columns:repeat(2,1fr)}
+  .comfort .grid{grid-template-columns:1fr}
+  .contact-grid{grid-template-columns:1fr}
+  .foot-grid{grid-template-columns:1fr 1fr}
+  .form-grid{grid-template-columns:1fr}
+}
+@media (max-width:680px){
+  nav.main{display:none}
+  .menu-toggle{display:block}
+  .header .btn:not(.menu-toggle){display:none}
+  .cards{grid-template-columns:1fr}
+  .amenities-grid{grid-template-columns:1fr}
+  .feature-strip{grid-template-columns:1fr}
+  .feature-strip .years{clip-path:none;min-width:0}
+  .foot-grid{grid-template-columns:1fr}
+  .hero .inner{padding:90px 20px 70px}
+}
+</style>
+</head>
+<body>
+
+<!-- ============ HEADER ============ -->
+<header class="header" id="top">
+  <div class="row">
+    <a class="brand" href="#top"><div class="logo">S</div><span>Salazar</span></a>
+    <nav class="main" id="mainNav">
+      <a href="#top" class="active">Home</a>
+      <a href="#amenities">Amenities</a>
+      <a href="#gallery">Gallery</a>
+      <a href="#book">Book Now</a>
+      <a href="#contact">Contact</a>
+    </nav>
+    <button class="btn sm" onclick="document.getElementById('book').scrollIntoView({behavior:'smooth'})">🛏 Reserve a Room</button>
+    <button class="menu-toggle" id="menuToggle" aria-label="Open menu">☰</button>
+  </div>
+</header>
+<div class="backdrop" id="backdrop"></div>
+<aside class="mobile-menu" id="mobileMenu">
+  <a href="#top">Home</a>
+  <a href="#amenities">Amenities</a>
+  <a href="#gallery">Gallery</a>
+  <a href="#book">Book Now</a>
+  <a href="#contact">Contact</a>
+  <button class="btn" onclick="closeMenu();document.getElementById('book').scrollIntoView({behavior:'smooth'})">Reserve a Room</button>
+</aside>
+
+<!-- ============ HERO ============ -->
+<section class="hero">
+  <div class="inner">
+    <div class="eyebrow">Salazar Escaping Paradise</div>
+    <h1>Escape to Paradise in <span>Marikaban Island</span></h1>
+    <p>Experience island bliss at Salazar Escaping Paradise in Marikaban, Tingloy, Batangas. Crystal-clear waters, pristine beaches, and unforgettable memories await.</p>
+    <button class="btn" onclick="document.getElementById('comfort').scrollIntoView({behavior:'smooth'})">See More ↓</button>
+  </div>
+</section>
+
+<!-- feature strip -->
+<div class="feature-strip">
+  <div class="years"><b>2+</b><span>Years in Service</span></div>
+  <div class="items">
+    <div class="it"><div class="ic">⏰</div>Real-time availability</div>
+    <div class="it"><div class="ic">🌊</div>Prime coastal location</div>
+    <div class="it"><div class="ic">😊</div>Friendly, attentive service</div>
+  </div>
+</div>
+
+<!-- ============ COMFORT ============ -->
+<section class="comfort" id="comfort">
+  <div class="container">
+    <div class="grid">
+      <img src="https://images.unsplash.com/photo-1542800945-a3a5e58e5cae?w=900&q=80" alt="Beachside cottage in Marikaban" loading="lazy">
+      <div>
+        <div class="eyebrow">Your home away from home</div>
+        <h2>Stay in Elevated Comfort</h2>
+        <p>Each room at Salazar Escaping Paradise is designed with light, space, and serenity in mind. From plush bedding to modern amenities, every detail supports rest and relaxation on Marikaban Island.</p>
+        <p><strong>Features List:</strong></p>
+        <ul>
+          <li>Spacious, light-filled rooms</li>
+          <li>Premium beds &amp; linens</li>
+          <li>Clean modern interiors</li>
+          <li>High-speed Wi-Fi &amp; smart TV</li>
+          <li>Daily housekeeping</li>
+        </ul>
+        <button class="btn" onclick="document.getElementById('book').scrollIntoView({behavior:'smooth'})">Book Now</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ AMENITIES ============ -->
+<section class="section alt" id="amenities">
+  <div class="container">
+    <div class="head"><h2>Amenities</h2><div class="underline"></div></div>
+    <div class="amenities-grid">
+      <div class="amenity"><img src="https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=800&q=80" alt="Bedroom comfort"><span class="num">1</span><span class="info-i">i</span><div class="meta"><h4>Bedrooms and Comfort</h4><p>Cozy, well-furnished rooms with quality linens and serene island views.</p></div></div>
+      <div class="amenity"><img src="https://images.unsplash.com/photo-1535262971677-13c93decd2d6?w=800&q=80" alt="Snorkeling gear"><span class="num">2</span><span class="info-i">i</span><div class="meta"><h4>Beach Essentials</h4><p>Snorkel sets, life vests and beach gear ready for your island adventure.</p></div></div>
+      <div class="amenity"><img src="https://images.unsplash.com/photo-1475274047050-1d0c0975c63e?w=800&q=80" alt="Bonfire"><span class="num">3</span><span class="info-i">i</span><div class="meta"><h4>Bonfire and Camp</h4><p>Gather around the campfire under starlit skies for unforgettable nights.</p></div></div>
+      <div class="amenity"><img src="https://images.unsplash.com/photo-1518972559570-7cc1309f3229?w=800&q=80" alt="Karaoke night"><span class="num">4</span><span class="info-i">i</span><div class="meta"><h4>Karaoke System</h4><p>Sing your heart out with our karaoke setup — fun for the whole crew.</p></div></div>
+      <div class="amenity"><img src="https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=800&q=80" alt="Kitchen utensils"><span class="num">5</span><span class="info-i">i</span><div class="meta"><h4>Kitchen Utensils</h4><p>Fully equipped kitchen with cookware and dining utensils for your meals.</p></div></div>
+      <div class="amenity"><img src="https://images.unsplash.com/photo-1530053969600-caed2596d242?w=800&q=80" alt="Snorkeling"><span class="num">6</span><span class="info-i">i</span><div class="meta"><h4>Snorkeling and Activities</h4><p>Discover vibrant marine life and join curated island activities.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ GALLERY ============ -->
+<section class="gallery" id="gallery">
+  <div class="container">
+    <div class="head"><h2>Gallery</h2><div class="underline"></div></div>
+    <div class="stage">
+      <img id="galImg" src="" alt="Resort gallery image">
+      <button class="gal-btn prev" id="galPrev" aria-label="Previous">‹</button>
+      <button class="gal-btn next" id="galNext" aria-label="Next">›</button>
+    </div>
+    <div class="thumbs" id="thumbs"></div>
+    <div class="dots" id="dots"></div>
+  </div>
+</section>
+
+<!-- ============ BOOK ============ -->
+<section class="section book" id="book">
+  <div class="container">
+    <h2>Book Your Reservation</h2>
+    <div class="tabs">
+      <button class="tab active" data-tab="rooms">Rooms</button>
+      <span class="tab-sep"></span>
+      <button class="tab" data-tab="cottages">Cottage</button>
+    </div>
+
+    <!-- Rooms tab -->
+    <div id="tab-rooms">
+      <h3 style="font-family:'Inter',sans-serif;color:var(--text);font-size:1.1rem;margin:0 0 4px">Rooms We Offer</h3>
+      <p class="lead">We offer clean, comfortable rooms with air-conditioning, soft linens, and essential amenities for a relaxing and convenient stay.</p>
+      <div class="cards" id="roomCards"></div>
+    </div>
+
+    <!-- Cottages tab -->
+    <div id="tab-cottages" style="display:none">
+      <h3 style="font-family:'Inter',sans-serif;color:var(--text);font-size:1.1rem;margin:0 0 4px">Cottages We Offer</h3>
+      <p class="lead">We offer cozy cottages with comfortable seating, shaded relaxation areas, and essential amenities for a relaxing beachside stay.</p>
+      <div class="cards" id="cottageCards"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CONTACT ============ -->
+<section class="section alt" id="contact">
+  <div class="container">
+    <div class="head"><h2>Contact Us</h2><div class="underline"></div></div>
+    <div class="contact-grid">
+      <div class="profiles">
+        <div class="person">
+          <div class="avatar"><img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&q=80" alt="Juan Dela Cruz"><span class="fb">f</span></div>
+          <h4>Juan Dela Cruz</h4>
+          <div class="num">+63 912 345 6789</div>
+          <button class="btn sm" onclick="openFB()">Message</button>
+        </div>
+        <div class="person">
+          <div class="avatar"><img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=300&q=80" alt="Maria Mercedez"><span class="fb">f</span></div>
+          <h4>Maria Mercedez</h4>
+          <div class="num">+63 912 345 6789</div>
+          <button class="btn sm" onclick="openFB()">Message</button>
+        </div>
+      </div>
+      <div class="contact-info">
+        <h3>Get in Touch</h3>
+        <p>We're here to help and answer any question you might have. We look forward to hearing from you.</p>
+        <ul class="info-list">
+          <li><span class="ic">📞</span><span>+63 912 345 6789</span></li>
+          <li><span class="ic">✉️</span><span>salazar.escapingparadise@gmail.com</span></li>
+          <li><span class="ic">📍</span><span>Marikaban, Tingloy, Batangas</span></li>
+        </ul>
+        <div class="map">
+          <iframe loading="lazy" src="https://www.google.com/maps?q=Tingloy,Batangas&output=embed"></iframe>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<footer>
+  <div class="container">
+    <div class="foot-grid">
+      <div>
+        <div class="foot-brand"><div class="logo" style="background:var(--primary);width:42px;height:42px;border-radius:50%;display:grid;place-items:center;color:#fff;font-family:'Playfair Display',serif;font-weight:800">S</div><strong style="color:#fff">Salazar Escaping Paradise</strong></div>
+        <p style="margin-top:10px;font-size:.9rem">Marikaban Island's beachside escape — comfort, nature, and unforgettable moments.</p>
+      </div>
+      <div>
+        <h5>Site Links</h5>
+        <ul>
+          <li><a href="#top">Home</a></li>
+          <li><a href="#amenities">Amenities</a></li>
+          <li><a href="#gallery">Gallery</a></li>
+          <li><a href="#book">Book Now</a></li>
+          <li><a href="#contact">Contact Us</a></li>
+        </ul>
+      </div>
+      <div>
+        <h5>Contact</h5>
+        <ul>
+          <li>+63 912 345 6789</li>
+          <li>salazar.escapingparadise@gmail.com</li>
+          <li>Marikaban, Tingloy, Batangas</li>
+          <li style="margin-top:8px"><a href="javascript:openFB()" style="background:#1877F2;color:#fff;width:30px;height:30px;border-radius:50%;display:inline-grid;place-items:center;font-weight:700">f</a></li>
+        </ul>
+      </div>
+      <div class="years-badge"><div class="circle">2+</div><div><b style="display:block">Years</b><span style="font-size:.8rem">in Service</span></div></div>
+    </div>
+    <div class="copy">© <span id="yr"></span> Salazar Escaping Paradise. All rights reserved.</div>
+  </div>
+</footer>
+
+<!-- ============ MODALS ============ -->
+<!-- Reservation Form -->
+<div class="modal" id="resModal">
+  <div class="modal-card">
+    <div class="modal-head"><h3>reservation Form</h3><button class="x" onclick="closeModal('resModal')">×</button></div>
+    <div class="modal-body">
+      <div class="headline-row">
+        <p class="lead" style="margin:0">• Please fill up the details of your Reservation</p>
+        <button class="add-btn" onclick="openAddModal()">Add +</button>
+      </div>
+      <div class="note"><span class="t">⚠ Please Note</span><strong>₱100.00</strong> Reservation Fee &nbsp; <span class="danger">Non-Refundable if Cancelled.</span> &nbsp; <strong style="color:var(--primary)">GCASH:</strong> 09123456789 &nbsp; JUAN D.</div>
+
+      <div class="form-grid">
+        <div>
+          <div class="field">
+            <label>Check In Time<span class="required">*</span></label>
+            <div class="row-inline">
+              <input type="time" id="ciTime" required>
+              <select id="ciAMPM"><option>AM</option><option>PM</option></select>
+            </div>
+          </div>
+          <div class="field">
+            <label>Check Out Time<span class="required">*</span></label>
+            <div class="row-inline">
+              <input type="time" id="coTime" required>
+              <select id="coAMPM"><option>AM</option><option>PM</option></select>
+            </div>
+          </div>
+          <div class="field">
+            <label>Select Check In/Out Dates<span class="required">*</span></label>
+            <div class="cal-wrap">
+              <div class="cal-head"><button type="button" id="prevMo">‹</button><strong id="moLabel"></strong><button type="button" id="nextMo">›</button></div>
+              <div class="cal-grid" id="calGrid"></div>
+              <div class="legend">
+                <span class="lg"><span class="sw" style="background:var(--primary)"></span>Selected</span>
+                <span class="lg"><span class="sw" style="background:#ffe2c7"></span>In range</span>
+                <span class="lg"><span class="sw" style="background:#fde2e2"></span>Occupied</span>
+              </div>
+              <div class="cal-foot"><span>Date In: <b id="dInLbl">—</b></span><span>Date Out: <b id="dOutLbl">—</b></span></div>
+              <div class="cal-foot"><span>Time In: <b id="tInLbl">—</b></span><span>Time Out: <b id="tOutLbl">—</b></span></div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="field"><label>Enter Your Name<span class="required">*</span></label><input type="text" id="fName" required></div>
+          <div class="field"><label>Mobile Number<span class="required">*</span></label><input type="tel" id="fMobile" required pattern="[0-9+\-\s]{7,}"></div>
+          <div class="field"><label>Email<span class="required">*</span></label><input type="email" id="fEmail" required></div>
+          <div class="field"><label>Address<span class="required">*</span></label><input type="text" id="fAddress" required></div>
+          <div class="field"><label>Proof of Payment<span class="required">*</span></label><input type="file" id="fProof" accept="image/*" required></div>
+
+          <div class="selected-rooms">
+            <div class="h">Selected Rooms <span style="font-size:.8rem;opacity:.9">total: <b id="selTotal">₱0</b></span></div>
+            <table id="selTable"><tbody><tr><td class="empty" colspan="3">No rooms selected yet. Tap <b>Add +</b> above.</td></tr></tbody></table>
+          </div>
+
+          <div class="modal-actions">
+            <button class="btn ghost" onclick="closeModal('resModal')">Cancel</button>
+            <button class="btn" onclick="submitReservation()">Reserve</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Add Room/Cottage Modal -->
+<div class="modal" id="addModal">
+  <div class="modal-card">
+    <div class="modal-head"><h3 id="addTitle">Add Room</h3><button class="x" onclick="closeModal('addModal')">×</button></div>
+    <div class="modal-body">
+      <p style="margin:0 0 8px;font-weight:600;color:#444;font-size:.9rem">SELECT ROOM</p>
+      <div class="tabs" style="margin-top:0">
+        <button class="tab active" data-addtab="rooms">Rooms</button>
+        <span class="tab-sep"></span>
+        <button class="tab" data-addtab="cottages">Cottage</button>
+      </div>
+      <div class="cards" id="addCards"></div>
+      <div class="modal-actions">
+        <button class="btn ghost" onclick="closeModal('addModal')">Cancel</button>
+        <button class="btn" onclick="closeModal('addModal')">Done</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Success modal -->
+<div class="modal" id="okModal">
+  <div class="modal-card success">
+    <div class="check">✓</div>
+    <h3>Thank You For Choosing Us</h3>
+    <p>We will verify your reservation shortly, please wait for our text or email confirmation message. Thanks!</p>
+    <button class="btn" onclick="closeModal('okModal')">Okay</button>
+  </div>
+</div>
+
+<script>
+/* ===========================================================
+   CONFIG — set these to your own URLs
+   =========================================================== */
+/* === Google Sheet sync ===
+   SHEET_ID    : the ID from your Google Sheet URL.
+   SHEET_NAME  : the tab name (default "Sheet1").
+   APPS_SCRIPT_URL : Web App URL from the Apps Script you deploy (see instructions
+                     at the bottom of this file). Used to WRITE new reservations.
+   The sheet must be shared as "Anyone with the link – Viewer" so the calendar
+   can READ occupied dates in real time via the gviz CSV endpoint. */
+const SHEET_ID = "1mXEJbzdOHjlrObqO3I5ehe6UigU18CEC6LAUAQ4NzDE";
+const SHEET_NAME = "Sheet1";
+const SHEET_CSV_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(SHEET_NAME)}&t=${Date.now()}`;
+const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxraIw9ca6jRAc48DGRavahcMSEFS_ahSzlZT72aUOlLkMij_sz-8wscR3F7V6CH5mE/exec";
+const FB_PROFILE_URL = "https://www.facebook.com/"; // replace with your FB profile
+
+function openFB(){ window.open(FB_PROFILE_URL,'_blank'); }
+document.getElementById('yr').textContent = new Date().getFullYear();
+
+/* ---------- Mobile menu ---------- */
+const menuToggle = document.getElementById('menuToggle');
+const mobileMenu = document.getElementById('mobileMenu');
+const backdrop = document.getElementById('backdrop');
+function closeMenu(){mobileMenu.classList.remove('open');backdrop.classList.remove('show')}
+menuToggle.onclick=()=>{mobileMenu.classList.add('open');backdrop.classList.add('show')};
+backdrop.onclick=closeMenu;
+mobileMenu.querySelectorAll('a').forEach(a=>a.onclick=closeMenu);
+
+/* ---------- Active nav highlight on scroll ---------- */
+const navLinks = document.querySelectorAll('nav.main a');
+const sections = ['top','amenities','gallery','book','contact'].map(id=>document.getElementById(id));
+window.addEventListener('scroll',()=>{
+  const y = window.scrollY+120;
+  let cur='top';
+  sections.forEach(s=>{ if(s && s.offsetTop<=y) cur=s.id; });
+  navLinks.forEach(a=>a.classList.toggle('active', a.getAttribute('href')==='#'+cur));
+});
+
+/* ---------- Tabs ---------- */
+document.querySelectorAll('.tabs .tab[data-tab]').forEach(t=>{
+  t.onclick=()=>{
+    document.querySelectorAll('.tabs .tab[data-tab]').forEach(x=>x.classList.remove('active'));
+    t.classList.add('active');
+    const v=t.dataset.tab;
+    document.getElementById('tab-rooms').style.display = v==='rooms'?'block':'none';
+    document.getElementById('tab-cottages').style.display = v==='cottages'?'block':'none';
+  };
+});
+
+/* ---------- Inventory ---------- */
+const ROOMS = [
+  {id:'mercury',name:'Room Mercury',pax:2,bedrooms:1,price:750,img:'https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?w=800&q=80'},
+  {id:'venus',name:'Room Venus',pax:4,bedrooms:2,price:900,img:'https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=800&q=80'},
+  {id:'earth',name:'Room Earth',pax:4,bedrooms:2,price:900,img:'https://images.unsplash.com/photo-1611892440504-42a792e24d32?w=800&q=80'},
+  {id:'mars',name:'Room Mars',pax:6,bedrooms:3,price:1000,img:'https://images.unsplash.com/photo-1566665797739-1674de7a421a?w=800&q=80'},
+];
+const COTTAGES = [
+  {id:'jupiter',name:'Cottage Jupiter',pax:8,extra:'With Table',price:600,img:'https://images.unsplash.com/photo-1542800945-a3a5e58e5cae?w=800&q=80'},
+  {id:'saturn',name:'Cottage Saturn',pax:8,extra:'With Table',price:600,img:'https://images.unsplash.com/photo-1559339352-11d035aa65de?w=800&q=80'},
+  {id:'uranus',name:'Cottage Uranus',pax:8,extra:'With Table',price:600,img:'https://images.unsplash.com/photo-1505228395891-9a51e7e86bf6?w=800&q=80'},
+  {id:'neptune',name:'Cottage Neptune',pax:8,extra:'With Table',price:600,img:'https://images.unsplash.com/photo-1540541338287-41700207dee6?w=800&q=80'},
+];
+
+function cardHTML(it,kind,btnLabel='Reserve'){
+  const specs = kind==='room'
+    ? `<span class="spec">👥 ${it.pax} Pax</span><span class="spec dark">🛏 ${it.bedrooms} Bedroom</span>`
+    : `<span class="spec">👥 ${it.pax} Pax</span><span class="spec dark">🪑 ${it.extra}</span>`;
+  return `<div class="card">
+    <div class="img"><span class="badge">Available</span><img src="${it.img}" alt="${it.name}" loading="lazy"></div>
+    <div class="body">
+      <h4>${it.name}</h4>
+      <div class="row-between">
+        <div class="specs">${specs}</div>
+        <div class="price">₱${it.price.toFixed(2)}</div>
+      </div>
+      <div class="actions"><button class="btn sm" data-act="${btnLabel.toLowerCase()}" data-kind="${kind}" data-id="${it.id}">${btnLabel} ${btnLabel==='Add'?'+':''}</button></div>
+    </div>
+  </div>`;
+}
+function renderInventory(){
+  document.getElementById('roomCards').innerHTML = ROOMS.map(r=>cardHTML(r,'room','Reserve')).join('');
+  document.getElementById('cottageCards').innerHTML = COTTAGES.map(c=>cardHTML(c,'cottage','Reserve')).join('');
+  document.querySelectorAll('[data-act="reserve"]').forEach(b=>{
+    b.onclick=()=>{ openReservation(b.dataset.kind, b.dataset.id); };
+  });
+}
+renderInventory();
+
+/* ---------- Gallery ---------- */
+const GALLERY = [
+  'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1400&q=80',
+  'https://images.unsplash.com/photo-1519046904884-53103b34b206?w=1400&q=80',
+  'https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=1400&q=80',
+  'https://images.unsplash.com/photo-1559128010-7c1ad6e1b6a5?w=1400&q=80',
+  'https://images.unsplash.com/photo-1540541338287-41700207dee6?w=1400&q=80',
+];
+let gIdx=0;
+function renderGallery(){
+  document.getElementById('galImg').src = GALLERY[gIdx];
+  document.getElementById('thumbs').innerHTML = GALLERY.map((u,i)=>`<button class="${i===gIdx?'active':''}" data-i="${i}"><img src="${u}" alt=""></button>`).join('');
+  document.getElementById('dots').innerHTML = GALLERY.map((_,i)=>`<span class="dot ${i===gIdx?'active':''}"></span>`).join('');
+  document.querySelectorAll('#thumbs button').forEach(b=>b.onclick=()=>{gIdx=+b.dataset.i;renderGallery()});
+}
+document.getElementById('galPrev').onclick=()=>{gIdx=(gIdx-1+GALLERY.length)%GALLERY.length;renderGallery()};
+document.getElementById('galNext').onclick=()=>{gIdx=(gIdx+1)%GALLERY.length;renderGallery()};
+renderGallery();
+setInterval(()=>{gIdx=(gIdx+1)%GALLERY.length;renderGallery()},6000);
+
+/* ===========================================================
+   RESERVATION FLOW
+   =========================================================== */
+const state = {
+  ciDate:null, coDate:null,
+  selected:[], // {kind,id,name,price}
+  occupied:new Set(), // 'YYYY-MM-DD'
+  viewMonth: new Date(new Date().getFullYear(), new Date().getMonth(), 1)
+};
+
+function openModal(id){document.getElementById(id).classList.add('show')}
+function closeModal(id){document.getElementById(id).classList.remove('show')}
+
+function openReservation(kind,id){
+  // pre-add the clicked item
+  state.selected = [];
+  const list = kind==='room'?ROOMS:COTTAGES;
+  const it = list.find(x=>x.id===id);
+  if(it) state.selected.push({kind,id,name:it.name,price:it.price});
+  renderSelected();
+  renderCalendar();
+  openModal('resModal');
+}
+
+/* ---------- Sheet load ---------- */
+function parseCSV(text){
+  // simple CSV (handles quoted fields)
+  const out=[]; let row=[],cur='',inQ=false;
+  for(let i=0;i<text.length;i++){
+    const c=text[i];
+    if(inQ){
+      if(c==='"' && text[i+1]==='"'){cur+='"';i++}
+      else if(c==='"'){inQ=false}
+      else cur+=c;
+    } else {
+      if(c==='"') inQ=true;
+      else if(c===','){row.push(cur);cur=''}
+      else if(c==='\n'){row.push(cur);out.push(row);row=[];cur=''}
+      else if(c!=='\r') cur+=c;
+    }
+  }
+  if(cur.length||row.length){row.push(cur);out.push(row)}
+  return out;
+}
+function ymd(d){return d.toISOString().slice(0,10)}
+function parseDateStr(s){
+  if(!s) return null;
+  s=s.trim();
+  // accept YYYY-MM-DD, M/D/YYYY, D/M/YYYY (assume M/D/YYYY for sheets)
+  let m;
+  if((m=s.match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/))) return new Date(+m[1],+m[2]-1,+m[3]);
+  if((m=s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/))) return new Date(+m[3],+m[1]-1,+m[2]);
+  const d=new Date(s); return isNaN(d)?null:d;
+}
+async function loadOccupied(){
+  try{
+    const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(SHEET_NAME)}&t=${Date.now()}`;
+    const res = await fetch(url,{cache:'no-store'});
+    const txt = await res.text();
+    const rows = parseCSV(txt).filter(r=>r.length>=4);
+    const head = rows.shift().map(h=>h.trim().toLowerCase());
+    const iIn = head.indexOf('check in');
+    const iOut = head.indexOf('check out');
+    state.occupied = new Set();
+    rows.forEach(r=>{
+      const a=parseDateStr(r[iIn]); const b=parseDateStr(r[iOut]);
+      if(!a||!b) return;
+      for(let d=new Date(a); d<=b; d.setDate(d.getDate()+1)){
+        state.occupied.add(ymd(d));
+      }
+    });
+    renderCalendar();
+  } catch(e){
+    console.warn('Could not load sheet',e);
+  }
+}
+loadOccupied();
+setInterval(loadOccupied, 15000); // poll every 15s for real-time sync
+
+/* ---------- Calendar ---------- */
+function renderCalendar(){
+  const grid = document.getElementById('calGrid');
+  if(!grid) return;
+  const m = state.viewMonth;
+  document.getElementById('moLabel').textContent = m.toLocaleString('en-US',{month:'long',year:'numeric'});
+  const first = new Date(m.getFullYear(),m.getMonth(),1);
+  const startDow = first.getDay();
+  const daysIn = new Date(m.getFullYear(),m.getMonth()+1,0).getDate();
+  const today = new Date(); today.setHours(0,0,0,0);
+  const dows=['S','M','T','W','T','F','S'];
+  let html = dows.map(d=>`<div class="dow">${d}</div>`).join('');
+  for(let i=0;i<startDow;i++) html+=`<div class="day empty"></div>`;
+  for(let d=1; d<=daysIn; d++){
+    const dt = new Date(m.getFullYear(),m.getMonth(),d);
+    const k = ymd(dt);
+    const cls=['day'];
+    if(dt<today) cls.push('dis');
+    if(state.occupied.has(k)) cls.push('occ');
+    if(state.ciDate && k===ymd(state.ciDate)) cls.push('sel');
+    if(state.coDate && k===ymd(state.coDate)) cls.push('sel');
+    if(state.ciDate && state.coDate && dt>state.ciDate && dt<state.coDate) cls.push('in-range');
+    html += `<div class="${cls.join(' ')}" data-d="${k}">${d}</div>`;
+  }
+  grid.innerHTML = html;
+  grid.querySelectorAll('.day:not(.empty):not(.dis):not(.occ)').forEach(el=>{
+    el.onclick=()=>{
+      const dt = parseDateStr(el.dataset.d);
+      if(!state.ciDate || (state.ciDate && state.coDate)){
+        state.ciDate = dt; state.coDate=null;
+      } else if(dt < state.ciDate){
+        state.ciDate = dt;
+      } else {
+        // ensure no occupied in between
+        for(let d=new Date(state.ciDate); d<=dt; d.setDate(d.getDate()+1)){
+          if(state.occupied.has(ymd(d))){ alert('Selected range contains an occupied date.'); return; }
+        }
+        state.coDate = dt;
+      }
+      document.getElementById('dInLbl').textContent  = state.ciDate?state.ciDate.toLocaleDateString():'—';
+      document.getElementById('dOutLbl').textContent = state.coDate?state.coDate.toLocaleDateString():'—';
+      renderCalendar();
+    };
+  });
+}
+document.getElementById('prevMo').onclick=()=>{state.viewMonth.setMonth(state.viewMonth.getMonth()-1);renderCalendar()};
+document.getElementById('nextMo').onclick=()=>{state.viewMonth.setMonth(state.viewMonth.getMonth()+1);renderCalendar()};
+
+['ciTime','coTime'].forEach(id=>{
+  document.getElementById(id).addEventListener('input',()=>{
+    const v=document.getElementById('ciTime').value, w=document.getElementById('coTime').value;
+    document.getElementById('tInLbl').textContent  = v?v+' '+document.getElementById('ciAMPM').value:'—';
+    document.getElementById('tOutLbl').textContent = w?w+' '+document.getElementById('coAMPM').value:'—';
+  });
+});
+
+/* ---------- Selected list ---------- */
+function renderSelected(){
+  const tbody = document.querySelector('#selTable tbody');
+  if(!state.selected.length){
+    tbody.innerHTML = `<tr><td class="empty" colspan="3">No rooms selected yet. Tap <b>Add +</b> above.</td></tr>`;
+  } else {
+    tbody.innerHTML = state.selected.map((s,i)=>`<tr><td>${s.name}</td><td>₱${s.price.toFixed(2)}</td><td style="text-align:right"><button class="rm" data-i="${i}" title="Remove">🗑</button></td></tr>`).join('');
+    tbody.querySelectorAll('.rm').forEach(b=>b.onclick=()=>{state.selected.splice(+b.dataset.i,1);renderSelected()});
+  }
+  document.getElementById('selTotal').textContent = '₱'+state.selected.reduce((s,x)=>s+x.price,0).toFixed(2);
+}
+
+/* ---------- Add Room/Cottage modal ---------- */
+function openAddModal(){
+  if(!state.ciDate || !state.coDate){
+    alert('Please select your Check-In and Check-Out dates first so we avoid date conflicts.');
+    return;
+  }
+  renderAddCards('rooms');
+  document.querySelectorAll('[data-addtab]').forEach(t=>t.classList.toggle('active', t.dataset.addtab==='rooms'));
+  document.getElementById('addTitle').textContent='Add Room';
+  openModal('addModal');
+}
+document.querySelectorAll('[data-addtab]').forEach(t=>{
+  t.onclick=()=>{
+    document.querySelectorAll('[data-addtab]').forEach(x=>x.classList.remove('active'));
+    t.classList.add('active');
+    document.getElementById('addTitle').textContent = t.dataset.addtab==='rooms'?'Add Room':'Add Cottage';
+    renderAddCards(t.dataset.addtab);
+  };
+});
+function renderAddCards(which){
+  const list = which==='rooms'?ROOMS:COTTAGES;
+  const kind = which==='rooms'?'room':'cottage';
+  document.getElementById('addCards').innerHTML = list.map(it=>cardHTML(it,kind,'Add')).join('');
+  document.querySelectorAll('#addCards [data-act="add"]').forEach(b=>{
+    b.onclick=()=>{
+      const it = (b.dataset.kind==='room'?ROOMS:COTTAGES).find(x=>x.id===b.dataset.id);
+      state.selected.push({kind:b.dataset.kind,id:it.id,name:it.name,price:it.price});
+      renderSelected();
+      b.textContent='Added ✓'; b.disabled=true;
+      setTimeout(()=>{b.textContent='Add +';b.disabled=false},1200);
+    };
+  });
+}
+
+/* ---------- Submit ---------- */
+function fileToBase64(file){
+  return new Promise((resolve,reject)=>{
+    const r = new FileReader();
+    r.onload = ()=>resolve(String(r.result).split(',')[1]||'');
+    r.onerror = reject;
+    r.readAsDataURL(file);
+  });
+}
+
+async function submitReservation(){
+  const fields=['fName','fMobile','fEmail','fAddress','ciTime','coTime'];
+  for(const id of fields){
+    const el=document.getElementById(id);
+    if(!el.value.trim()){ el.focus(); alert('Please fill out all required fields.'); return; }
+  }
+  if(!state.ciDate || !state.coDate){ alert('Please select Check-In and Check-Out dates.'); return; }
+  const proof = document.getElementById('fProof').files[0];
+  if(!proof){ alert('Please attach proof of payment image.'); return; }
+  if(!state.selected.length){ alert('Please add at least one room or cottage.'); return; }
+
+  const submitBtn = document.querySelector('#resModal .btn:not(.ghost)');
+  const originalText = submitBtn ? submitBtn.textContent : '';
+  if(submitBtn){ submitBtn.disabled = true; submitBtn.textContent = 'Submitting…'; }
+
+  const ciTime = document.getElementById('ciTime').value+' '+document.getElementById('ciAMPM').value;
+  const coTime = document.getElementById('coTime').value+' '+document.getElementById('coAMPM').value;
+
+  // Build one row per selected room (matches your sheet headers).
+  const rows = state.selected.map(s=>({
+    Rooms: s.name,
+    Date: new Date().toLocaleDateString(),
+    'Check In':  state.ciDate.toLocaleDateString()+' '+ciTime,
+    'Check Out': state.coDate.toLocaleDateString()+' '+coTime,
+    Name:    document.getElementById('fName').value,
+    Mobile:  document.getElementById('fMobile').value,
+    Email:   document.getElementById('fEmail').value,
+    Address: document.getElementById('fAddress').value,
+    File:    proof.name
+  }));
+
+  try{
+    if(!APPS_SCRIPT_URL || APPS_SCRIPT_URL.startsWith('PASTE_')){
+      throw new Error('APPS_SCRIPT_URL is not configured. Deploy the Apps Script (instructions at the bottom of this file) and paste the Web App URL into APPS_SCRIPT_URL.');
+    }
+    const fileB64 = await fileToBase64(proof);
+    // Use text/plain to avoid CORS preflight on Apps Script Web Apps.
+    const payload = {
+      rows,
+      file: { name: proof.name, mimeType: proof.type || 'application/octet-stream', data: fileB64 }
+    };
+    const res = await fetch(APPS_SCRIPT_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify(payload)
+    });
+    const out = await res.json().catch(()=>({ok:false,error:'Bad response from Apps Script'}));
+    if(!out.ok) throw new Error(out.error || 'Failed to save reservation');
+
+    // Optimistically mark dates as occupied locally; then refresh from sheet.
+    for(let d=new Date(state.ciDate); d<=state.coDate; d.setDate(d.getDate()+1)){
+      state.occupied.add(ymd(d));
+    }
+    renderCalendar();
+    loadOccupied(); // pull authoritative state right away
+
+    closeModal('resModal');
+    openModal('okModal');
+
+    // reset form
+    state.selected=[]; state.ciDate=null; state.coDate=null;
+    ['fName','fMobile','fEmail','fAddress','ciTime','coTime'].forEach(id=>document.getElementById(id).value='');
+    document.getElementById('fProof').value='';
+    document.getElementById('dInLbl').textContent='—';
+    document.getElementById('dOutLbl').textContent='—';
+    document.getElementById('tInLbl').textContent='—';
+    document.getElementById('tOutLbl').textContent='—';
+    renderSelected();
+  } catch(err){
+    console.error(err);
+    alert('Sorry, your reservation could not be saved.\n\n'+err.message);
+  } finally {
+    if(submitBtn){ submitBtn.disabled = false; submitBtn.textContent = originalText || 'Reserve'; }
+  }
+}
+</script>
+</body>
+</html>
+
