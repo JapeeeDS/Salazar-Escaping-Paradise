@@ -715,19 +715,27 @@ const COTTAGES = [
   {id:'neptune',name:'Cottage Neptune',pax:8,extra:'With Table',price:600,img:'https://images.unsplash.com/photo-1540541338287-41700207dee6?w=800&q=80'},
 ];
 
-function cardHTML(it,kind,btnLabel='Reserve'){
+function cardHTML(it,kind,btnLabel='Reserve',opts={}){
   const specs = kind==='room'
     ? `<span class="spec"><i data-lucide="users"></i> ${it.pax} Pax</span><span class="spec dark"><i data-lucide="bed-double"></i> ${it.bedrooms} Bedroom</span>`
     : `<span class="spec"><i data-lucide="users"></i> ${it.pax} Pax</span><span class="spec dark"><i data-lucide="armchair"></i> ${it.extra}</span>`;
-  return `<div class="card">
-    <div class="img"><span class="badge">Available</span><img src="${it.img}" alt="${it.name}" loading="lazy"></div>
+  const unavailable = !!opts.unavailable;
+  const already = !!opts.already;
+  let badgeText = 'Available', badgeStyle = '';
+  if(unavailable){ badgeText = 'Not Available'; badgeStyle = 'background:rgba(200,30,30,.85)'; }
+  else if(already){ badgeText = 'Already Added'; badgeStyle = 'background:rgba(40,120,40,.85)'; }
+  const btnDisabled = unavailable || already;
+  const btnLabelOut = unavailable ? 'Not Available' : (already ? 'Added ✓' : `${btnLabel} ${btnLabel==='Add'?'+':''}`);
+  const imgStyle = unavailable ? 'style="filter:grayscale(1) opacity(.6)"' : '';
+  return `<div class="card"${unavailable?' style="opacity:.85"':''}>
+    <div class="img"><span class="badge" style="${badgeStyle}">${badgeText}</span><img src="${it.img}" alt="${it.name}" loading="lazy" ${imgStyle}></div>
     <div class="body">
       <h4>${it.name}</h4>
       <div class="row-between">
         <div class="specs">${specs}</div>
         <div class="price">₱${it.price.toFixed(2)}</div>
       </div>
-      <div class="actions"><button class="btn sm" data-act="${btnLabel.toLowerCase()}" data-kind="${kind}" data-id="${it.id}">${btnLabel} ${btnLabel==='Add'?'+':''}</button></div>
+      <div class="actions"><button class="btn sm" data-act="${btnLabel.toLowerCase()}" data-kind="${kind}" data-id="${it.id}"${btnDisabled?' disabled style="opacity:.6;cursor:not-allowed"':''}>${btnLabelOut}</button></div>
     </div>
   </div>`;
 }
@@ -1086,30 +1094,39 @@ document.querySelectorAll('[data-addtab]').forEach(t=>{
     renderAddCards(t.dataset.addtab);
   };
 });
+function isItemUnavailableForRange(name){
+  if(!state.ciDate || !state.coDate) return false;
+  const set = (state.occupiedByRoom||{})[name];
+  if(!set || !set.size) return false;
+  for(let d=new Date(state.ciDate); d<=state.coDate; d.setDate(d.getDate()+1)){
+    if(set.has(ymd(d))) return true;
+  }
+  return false;
+}
 function renderAddCards(which){
   const list = which==='rooms'?ROOMS:COTTAGES;
   const kind = which==='rooms'?'room':'cottage';
-  document.getElementById('addCards').innerHTML = list.map(it=>cardHTML(it,kind,'Add')).join('');
+  const selectedIds = new Set(state.selected.filter(s=>s.kind===kind).map(s=>s.id));
+  document.getElementById('addCards').innerHTML = list.map(it=>{
+    const unavailable = isItemUnavailableForRange(it.name);
+    const already = selectedIds.has(it.id);
+    return cardHTML(it,kind,'Add',{unavailable, already});
+  }).join('');
   if(window.lucide) lucide.createIcons();
   document.querySelectorAll('#addCards [data-act="add"]').forEach(b=>{
+    if(b.disabled) return;
     b.onclick=()=>{
       const it = (b.dataset.kind==='room'?ROOMS:COTTAGES).find(x=>x.id===b.dataset.id);
-      // If the user already picked dates, make sure this room isn't booked for that range
-      if(state.ciDate && state.coDate){
-        const set = (state.occupiedByRoom||{})[it.name];
-        if(set){
-          for(let d=new Date(state.ciDate); d<=state.coDate; d.setDate(d.getDate()+1)){
-            if(set.has(ymd(d))){
-              alert(`"${it.name}" is already booked for one or more days in your selected date range. Please pick a different room or change your dates.`);
-              return;
-            }
-          }
-        }
+      // Re-check in case dates changed since render
+      if(isItemUnavailableForRange(it.name)){
+        alert(`"${it.name}" is already booked for one or more days in your selected date range. Please pick a different room or change your dates.`);
+        renderAddCards(which);
+        return;
       }
       state.selected.push({kind:b.dataset.kind,id:it.id,name:it.name,price:it.price});
       renderSelected();
       b.textContent='Added ✓'; b.disabled=true;
-      setTimeout(()=>{b.textContent='Add +';b.disabled=false},1200);
+      setTimeout(()=>renderAddCards(which),900);
     };
   });
 }
