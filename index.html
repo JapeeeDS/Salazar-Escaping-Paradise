@@ -267,26 +267,28 @@ footer ul li a:hover{color:var(--primary)}
   .hero .inner{padding:90px 20px 70px}
 
   /* Reservation form mobile fixes */
-  .modal{padding:12px 8px}
-  .modal-card{border-radius:12px}
+  .modal{padding:10px 6px;align-items:flex-start}
+  .modal-card{border-radius:12px;max-width:100%;width:100%}
   .modal-head{padding:12px 14px}
   .modal-head h3{font-size:.95rem}
-  .modal-body{padding:14px 14px}
-  .headline-row{flex-direction:column;align-items:flex-start;gap:8px}
+  .modal-body{padding:12px 12px}
+  .modal-body, .modal-card, .form-grid, .field, .cal-wrap, .selected-rooms, .note{max-width:100%;box-sizing:border-box;min-width:0}
+  .modal-body *{box-sizing:border-box}
+  .headline-row{flex-direction:column;align-items:stretch;gap:8px}
   .headline-row .add-btn{align-self:stretch;justify-content:center}
-  .note{font-size:.82rem;line-height:1.5}
-  .form-grid{gap:14px}
-  .field input,.field select,.field textarea{font-size:16px;padding:10px 12px} /* prevent iOS zoom */
+  .note{font-size:.78rem;line-height:1.5;word-break:break-word}
+  .form-grid{gap:14px;grid-template-columns:1fr}
+  .field input,.field select,.field textarea{font-size:16px;padding:10px 12px;width:100%} /* prevent iOS zoom */
   .field .row-inline{flex-wrap:wrap}
-  .field .row-inline input{min-width:0;flex:1 1 60%}
-  .field .row-inline select{width:auto;flex:0 0 80px}
-  .cal-wrap{padding:8px}
-  .cal-grid{font-size:.72rem}
-  .cal-grid .day{padding:8px 0}
-  .cal-foot{flex-direction:column;gap:2px}
+  .field .row-inline input{min-width:0;flex:1 1 100%}
+  .cal-wrap{padding:8px;overflow:hidden}
+  .cal-grid{font-size:.72rem;gap:1px}
+  .cal-grid .day{padding:8px 0;min-width:0}
+  .cal-foot{flex-direction:column;gap:2px;font-size:.78rem}
   .legend{font-size:.68rem;gap:8px}
-  .selected-rooms table{font-size:.82rem}
-  .selected-rooms td{padding:6px 8px}
+  .selected-rooms{overflow-x:auto}
+  .selected-rooms table{font-size:.82rem;min-width:0;width:100%}
+  .selected-rooms td{padding:6px 8px;word-break:break-word}
   .modal-actions{flex-direction:column-reverse;gap:8px}
   .modal-actions .btn{width:100%;justify-content:center}
   /* Amenity info tweaks */
@@ -503,17 +505,11 @@ footer ul li a:hover{color:var(--primary)}
         <div>
           <div class="field">
             <label>Check In Time<span class="required">*</span></label>
-            <div class="row-inline">
-              <input type="time" id="ciTime" required>
-              <select id="ciAMPM"><option>AM</option><option>PM</option></select>
-            </div>
+            <input type="time" id="ciTime" required>
           </div>
           <div class="field">
             <label>Check Out Time<span class="required">*</span></label>
-            <div class="row-inline">
-              <input type="time" id="coTime" required>
-              <select id="coAMPM"><option>AM</option><option>PM</option></select>
-            </div>
+            <input type="time" id="coTime" required>
           </div>
           <div class="field">
             <label>Select Check In/Out Dates<span class="required">*</span></label>
@@ -905,11 +901,19 @@ function renderCalendar(){
 document.getElementById('prevMo').onclick=()=>{state.viewMonth.setMonth(state.viewMonth.getMonth()-1);renderCalendar()};
 document.getElementById('nextMo').onclick=()=>{state.viewMonth.setMonth(state.viewMonth.getMonth()+1);renderCalendar()};
 
+function to12h(t){
+  if(!t) return '';
+  const [hStr,mStr]=t.split(':');
+  let h=parseInt(hStr,10); const m=mStr||'00';
+  const ap = h>=12?'PM':'AM';
+  h = h%12; if(h===0) h=12;
+  return h+':'+m+' '+ap;
+}
 ['ciTime','coTime'].forEach(id=>{
   document.getElementById(id).addEventListener('input',()=>{
     const v=document.getElementById('ciTime').value, w=document.getElementById('coTime').value;
-    document.getElementById('tInLbl').textContent  = v?v+' '+document.getElementById('ciAMPM').value:'—';
-    document.getElementById('tOutLbl').textContent = w?w+' '+document.getElementById('coAMPM').value:'—';
+    document.getElementById('tInLbl').textContent  = v?to12h(v):'—';
+    document.getElementById('tOutLbl').textContent = w?to12h(w):'—';
   });
 });
 
@@ -1019,8 +1023,8 @@ async function submitReservation(){
   const rows = state.selected.map(s=>({
     Rooms: s.name,
     Date: new Date().toLocaleDateString(),
-    'Check In': state.ciDate.toLocaleDateString()+' '+document.getElementById('ciTime').value+' '+document.getElementById('ciAMPM').value,
-    'Check Out': state.coDate.toLocaleDateString()+' '+document.getElementById('coTime').value+' '+document.getElementById('coAMPM').value,
+    'Check In': state.ciDate.toLocaleDateString()+' '+to12h(document.getElementById('ciTime').value),
+    'Check Out': state.coDate.toLocaleDateString()+' '+to12h(document.getElementById('coTime').value),
     Name: document.getElementById('fName').value,
     Mobile: document.getElementById('fMobile').value,
     Email: document.getElementById('fEmail').value,
