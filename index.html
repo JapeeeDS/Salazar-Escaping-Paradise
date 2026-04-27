@@ -508,7 +508,7 @@ footer ul li a:hover{color:var(--primary)}
 
           <div class="modal-actions">
             <button class="btn ghost" onclick="closeModal('resModal')">Cancel</button>
-            <button class="btn" onclick="submitReservation()">Reserve</button>
+            <button class="btn" id="reserveBtn" onclick="submitReservation()">Reserve</button>
           </div>
         </div>
       </div>
@@ -689,7 +689,12 @@ function parseCSV(text){
   if(cur.length||row.length){row.push(cur);out.push(row)}
   return out;
 }
-function ymd(d){return d.toISOString().slice(0,10)}
+function ymd(d){
+  const y=d.getFullYear();
+  const m=String(d.getMonth()+1).padStart(2,'0');
+  const day=String(d.getDate()).padStart(2,'0');
+  return `${y}-${m}-${day}`;
+}
 function parseDateStr(s){
   if(!s) return null;
   s=s.trim();
@@ -748,8 +753,13 @@ function renderCalendar(){
     html += `<div class="${cls.join(' ')}" data-d="${k}">${d}</div>`;
   }
   grid.innerHTML = html;
-  grid.querySelectorAll('.day:not(.empty):not(.dis):not(.occ)').forEach(el=>{
+  // Allow clicking any non-empty/non-past day; show alert if occupied so user gets feedback
+  grid.querySelectorAll('.day:not(.empty):not(.dis)').forEach(el=>{
     el.onclick=()=>{
+      if(el.classList.contains('occ')){
+        alert('This date is already occupied. Please pick another date.');
+        return;
+      }
       const dt = parseDateStr(el.dataset.d);
       if(!state.ciDate || (state.ciDate && state.coDate)){
         state.ciDate = dt; state.coDate=null;
@@ -758,7 +768,7 @@ function renderCalendar(){
       } else {
         // ensure no occupied in between
         for(let d=new Date(state.ciDate); d<=dt; d.setDate(d.getDate()+1)){
-          if(state.occupied.has(ymd(d))){ alert('Selected range contains an occupied date.'); return; }
+          if(state.occupied.has(ymd(d))){ alert('Selected range contains an occupied date. Please choose a different range.'); return; }
         }
         state.coDate = dt;
       }
@@ -853,6 +863,19 @@ async function submitReservation(){
   if(!proof){ alert('Please attach proof of payment image.'); return; }
   if(!state.selected.length){ alert('Please add at least one room or cottage.'); return; }
 
+  // Final check that no selected date became occupied while the user was filling the form
+  for(let d=new Date(state.ciDate); d<=state.coDate; d.setDate(d.getDate()+1)){
+    if(state.occupied.has(ymd(d))){
+      alert('Sorry, one of the dates in your selected range was just booked. Please pick a different range.');
+      return;
+    }
+  }
+
+  const reserveBtn = document.getElementById('reserveBtn');
+  const overlay = document.getElementById('loadingOverlay');
+  if(reserveBtn){ reserveBtn.disabled = true; reserveBtn.textContent = 'Processing…'; }
+  if(overlay){ overlay.style.display = 'flex'; }
+
   const rows = state.selected.map(s=>({
     Rooms: s.name,
     Date: new Date().toLocaleDateString(),
@@ -881,6 +904,8 @@ async function submitReservation(){
   }catch(err){
     console.error('Sheet sync failed:', err);
     alert('Could not sync to Google Sheet. Please try again.');
+    if(overlay){ overlay.style.display = 'none'; }
+    if(reserveBtn){ reserveBtn.disabled = false; reserveBtn.textContent = 'Reserve'; }
     return;
   }
 
@@ -889,6 +914,9 @@ async function submitReservation(){
     state.occupied.add(ymd(d));
   }
   renderCalendar();
+
+  if(overlay){ overlay.style.display = 'none'; }
+  if(reserveBtn){ reserveBtn.disabled = false; reserveBtn.textContent = 'Reserve'; }
 
   closeModal('resModal');
   openModal('okModal');
@@ -904,5 +932,12 @@ async function submitReservation(){
   renderSelected();
 }
 </script>
+
+<!-- Loading overlay shown while reservation submits -->
+<div id="loadingOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:9999;align-items:center;justify-content:center;flex-direction:column;color:#fff;font-family:system-ui,sans-serif;">
+  <div style="width:56px;height:56px;border:5px solid rgba(255,255,255,.25);border-top-color:#fff;border-radius:50%;animation:spin 1s linear infinite;"></div>
+  <div style="margin-top:14px;font-size:1rem;letter-spacing:.3px;">Processing your reservation…</div>
+</div>
+<style>@keyframes spin{to{transform:rotate(360deg)}}</style>
 </body>
 </html>
