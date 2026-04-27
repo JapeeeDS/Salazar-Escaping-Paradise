@@ -884,7 +884,8 @@ function combineSheetDateTime(dateStr, timeStr){
 
 async function loadOccupied(){
   try{
-    const res = await fetch(SHEET_CSV_URL,{cache:'no-store'});
+    const csvUrl = SHEET_CSV_URL + (SHEET_CSV_URL.includes('?') ? '&' : '?') + '_=' + Date.now();
+    const res = await fetch(csvUrl,{cache:'no-store'});
     const txt = await res.text();
     const rows = parseCSV(txt).filter(r=>r.length>=4);
     const head = rows.shift().map(h=>h.trim().toLowerCase());
@@ -922,23 +923,21 @@ async function loadOccupied(){
     console.warn('Could not load sheet',e);
   }
 }
-// Returns a Set of dates that should be blocked on the calendar.
-// If the user has selected rooms/cottages, only those rooms' booked dates are
-// blocked (so they can still book a different room on the same day).
-// If nothing is selected yet, the union of ALL booked dates is blocked so the
-// user cannot pick a date that is already occupied in the sheet.
+// Returns the union of ALL booked dates from Google Sheet so a date already
+// occupied anywhere in the sheet cannot be selected again after refresh.
 function currentOccupiedSet(){
   const out = new Set();
   const map = state.occupiedByRoom || {};
-  if(state.selected && state.selected.length){
-    state.selected.forEach(sel=>{
-      const set = map[sel.name];
-      if(set) set.forEach(d=>out.add(d));
-    });
-  } else {
-    Object.values(map).forEach(set=>set.forEach(d=>out.add(d)));
-  }
+  Object.values(map).forEach(set=>set.forEach(d=>out.add(d)));
   return out;
+}
+function selectedRangeHasOccupiedDate(){
+  if(!state.ciDate || !state.coDate) return false;
+  const occ = currentOccupiedSet();
+  for(let d=new Date(state.ciDate); d<=state.coDate; d.setDate(d.getDate()+1)){
+    if(occ.has(ymd(d))) return true;
+  }
+  return false;
 }
 // Check if a proposed [startDt, endDt] datetime range overlaps any existing booking
 // for any of the currently-selected rooms. Returns the conflicting room name, or null.
@@ -971,9 +970,7 @@ function renderCalendar(){
   let html = dows.map(d=>`<div class="dow">${d}</div>`).join('');
   for(let i=0;i<startDow;i++) html+=`<div class="day empty"></div>`;
   const occSet = currentOccupiedSet();
-  const tooltipText = state.selected.length
-    ? 'Not available — already booked for your selected room/cottage'
-    : 'Not available — already booked';
+  const tooltipText = 'Not available — already booked';
   for(let d=1; d<=daysIn; d++){
     const dt = new Date(m.getFullYear(),m.getMonth(),d);
     const k = ymd(dt);
@@ -997,10 +994,10 @@ function renderCalendar(){
       } else if(dt < state.ciDate){
         state.ciDate = dt;
       } else {
-        // ensure no occupied in between (for currently-selected rooms only)
+        // ensure no occupied date in between
         const occ = currentOccupiedSet();
         for(let d=new Date(state.ciDate); d<=dt; d.setDate(d.getDate()+1)){
-          if(occ.has(ymd(d))){ alert('Selected range contains a date already booked for one of your selected rooms/cottages. Please choose a different range.'); return; }
+          if(occ.has(ymd(d))){ alert('Selected range contains a date already booked. Please choose a different range.'); return; }
         }
         state.coDate = dt;
       }
@@ -1116,6 +1113,12 @@ async function submitReservation(){
     if(!el.value.trim()){ el.focus(); alert('Please fill out all required fields.'); return; }
   }
   if(!state.ciDate || !state.coDate){ alert('Please select Check-In and Check-Out dates.'); return; }
+  await loadOccupied();
+  if(selectedRangeHasOccupiedDate()){
+    alert('Sorry, one or more selected dates are already occupied in Google Sheet. Please choose another date.');
+    renderCalendar();
+    return;
+  }
   const proof = document.getElementById('fProof').files[0];
   if(!proof){ alert('Please attach proof of payment image.'); return; }
   if(!state.selected.length){ alert('Please add at least one room or cottage.'); return; }
