@@ -199,13 +199,15 @@ footer ul li a:hover{color:var(--primary)}
 .cal-head button:hover{background:var(--soft)}
 .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;text-align:center;font-size:.78rem}
 .cal-grid .dow{font-weight:700;color:var(--muted);padding:4px 0}
-.cal-grid .day{padding:6px 0;border-radius:6px;cursor:pointer;user-select:none}
+.cal-grid .day{padding:6px 0;border-radius:6px;cursor:pointer;user-select:none;position:relative}
 .cal-grid .day:hover:not(.dis):not(.occ){background:var(--soft)}
 .cal-grid .day.empty{visibility:hidden}
-.cal-grid .day.occ{background:#fde2e2;color:#9a1a1a;cursor:not-allowed;text-decoration:line-through}
+.cal-grid .day.occ{background:#fde2e2;color:#9a1a1a;cursor:not-allowed;text-decoration:line-through;pointer-events:auto}
 .cal-grid .day.dis{color:#bbb;cursor:not-allowed}
 .cal-grid .day.sel{background:var(--primary);color:#fff;font-weight:700}
 .cal-grid .day.in-range{background:#ffe2c7;color:#9a4b09}
+.cal-grid .day.occ::after{content:"Not available — already booked";position:absolute;left:50%;bottom:calc(100% + 6px);transform:translateX(-50%);background:#1a1a1a;color:#fff;font-size:11px;padding:4px 8px;border-radius:4px;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .15s;z-index:10}
+.cal-grid .day.occ:hover::after{opacity:1}
 .legend{display:flex;gap:14px;font-size:.72rem;color:#666;margin-top:8px;flex-wrap:wrap}
 .legend .lg{display:inline-flex;align-items:center;gap:6px}
 .legend .sw{width:12px;height:12px;border-radius:3px;display:inline-block}
@@ -710,20 +712,36 @@ async function loadOccupied(){
     const txt = await res.text();
     const rows = parseCSV(txt).filter(r=>r.length>=4);
     const head = rows.shift().map(h=>h.trim().toLowerCase());
+    const iRoom = head.indexOf('rooms');
     const iIn = head.indexOf('check in');
     const iOut = head.indexOf('check out');
-    state.occupied = new Set();
+    // Per-room/cottage occupancy: { "Room Name": Set("YYYY-MM-DD", ...) }
+    state.occupiedByRoom = {};
     rows.forEach(r=>{
+      const roomName = (r[iRoom]||'').trim();
       const a=parseDateStr(r[iIn]); const b=parseDateStr(r[iOut]);
-      if(!a||!b) return;
+      if(!roomName || !a || !b) return;
+      if(!state.occupiedByRoom[roomName]) state.occupiedByRoom[roomName] = new Set();
       for(let d=new Date(a); d<=b; d.setDate(d.getDate()+1)){
-        state.occupied.add(ymd(d));
+        state.occupiedByRoom[roomName].add(ymd(d));
       }
     });
     renderCalendar();
   } catch(e){
     console.warn('Could not load sheet',e);
   }
+}
+// Returns a Set of dates occupied by the rooms/cottages the user has currently selected.
+// If nothing is selected yet, no dates are blocked (calendar is fully open).
+function currentOccupiedSet(){
+  const out = new Set();
+  if(!state.selected || !state.selected.length) return out;
+  const map = state.occupiedByRoom || {};
+  state.selected.forEach(sel=>{
+    const set = map[sel.name];
+    if(set) set.forEach(d=>out.add(d));
+  });
+  return out;
 }
 loadOccupied();
 setInterval(loadOccupied, 60000);
@@ -741,34 +759,37 @@ function renderCalendar(){
   const dows=['S','M','T','W','T','F','S'];
   let html = dows.map(d=>`<div class="dow">${d}</div>`).join('');
   for(let i=0;i<startDow;i++) html+=`<div class="day empty"></div>`;
+  const occSet = currentOccupiedSet();
+  const tooltipText = state.selected.length
+    ? 'Not available — already booked for your selected room/cottage'
+    : 'Not available — already booked';
   for(let d=1; d<=daysIn; d++){
     const dt = new Date(m.getFullYear(),m.getMonth(),d);
     const k = ymd(dt);
     const cls=['day'];
     if(dt<today) cls.push('dis');
-    if(state.occupied.has(k)) cls.push('occ');
+    const isOcc = occSet.has(k);
+    if(isOcc) cls.push('occ');
     if(state.ciDate && k===ymd(state.ciDate)) cls.push('sel');
     if(state.coDate && k===ymd(state.coDate)) cls.push('sel');
     if(state.ciDate && state.coDate && dt>state.ciDate && dt<state.coDate) cls.push('in-range');
-    html += `<div class="${cls.join(' ')}" data-d="${k}">${d}</div>`;
+    const titleAttr = isOcc ? ` title="${tooltipText}"` : '';
+    html += `<div class="${cls.join(' ')}" data-d="${k}"${titleAttr}>${d}</div>`;
   }
   grid.innerHTML = html;
-  // Allow clicking any non-empty/non-past day; show alert if occupied so user gets feedback
-  grid.querySelectorAll('.day:not(.empty):not(.dis)').forEach(el=>{
+  // Occupied days are excluded from the click handler entirely — they cannot be selected
+  grid.querySelectorAll('.day:not(.empty):not(.dis):not(.occ)').forEach(el=>{
     el.onclick=()=>{
-      if(el.classList.contains('occ')){
-        alert('This date is already occupied. Please pick another date.');
-        return;
-      }
       const dt = parseDateStr(el.dataset.d);
       if(!state.ciDate || (state.ciDate && state.coDate)){
         state.ciDate = dt; state.coDate=null;
       } else if(dt < state.ciDate){
         state.ciDate = dt;
       } else {
-        // ensure no occupied in between
+        // ensure no occupied in between (for currently-selected rooms only)
+        const occ = currentOccupiedSet();
         for(let d=new Date(state.ciDate); d<=dt; d.setDate(d.getDate()+1)){
-          if(state.occupied.has(ymd(d))){ alert('Selected range contains an occupied date. Please choose a different range.'); return; }
+          if(occ.has(ymd(d))){ alert('Selected range contains a date already booked for one of your selected rooms/cottages. Please choose a different range.'); return; }
         }
         state.coDate = dt;
       }
@@ -796,17 +817,20 @@ function renderSelected(){
     tbody.innerHTML = `<tr><td class="empty" colspan="3">No rooms selected yet. Tap <b>Add +</b> above.</td></tr>`;
   } else {
     tbody.innerHTML = state.selected.map((s,i)=>`<tr><td>${s.name}</td><td>₱${s.price.toFixed(2)}</td><td style="text-align:right"><button class="rm" data-i="${i}" title="Remove">🗑</button></td></tr>`).join('');
-    tbody.querySelectorAll('.rm').forEach(b=>b.onclick=()=>{state.selected.splice(+b.dataset.i,1);renderSelected()});
+    tbody.querySelectorAll('.rm').forEach(b=>b.onclick=()=>{
+      state.selected.splice(+b.dataset.i,1);
+      renderSelected();
+      renderCalendar(); // occupancy depends on selected rooms
+    });
   }
   document.getElementById('selTotal').textContent = '₱'+state.selected.reduce((s,x)=>s+x.price,0).toFixed(2);
+  // Re-render calendar so per-room occupied dates reflect current selection
+  renderCalendar();
 }
 
 /* ---------- Add Room/Cottage modal ---------- */
 function openAddModal(){
-  if(!state.ciDate || !state.coDate){
-    alert('Please select your Check-In and Check-Out dates first so we avoid date conflicts.');
-    return;
-  }
+  // Pick rooms first; calendar will show occupancy for whichever rooms are added.
   renderAddCards('rooms');
   document.querySelectorAll('[data-addtab]').forEach(t=>t.classList.toggle('active', t.dataset.addtab==='rooms'));
   document.getElementById('addTitle').textContent='Add Room';
@@ -827,6 +851,18 @@ function renderAddCards(which){
   document.querySelectorAll('#addCards [data-act="add"]').forEach(b=>{
     b.onclick=()=>{
       const it = (b.dataset.kind==='room'?ROOMS:COTTAGES).find(x=>x.id===b.dataset.id);
+      // If the user already picked dates, make sure this room isn't booked for that range
+      if(state.ciDate && state.coDate){
+        const set = (state.occupiedByRoom||{})[it.name];
+        if(set){
+          for(let d=new Date(state.ciDate); d<=state.coDate; d.setDate(d.getDate()+1)){
+            if(set.has(ymd(d))){
+              alert(`"${it.name}" is already booked for one or more days in your selected date range. Please pick a different room or change your dates.`);
+              return;
+            }
+          }
+        }
+      }
       state.selected.push({kind:b.dataset.kind,id:it.id,name:it.name,price:it.price});
       renderSelected();
       b.textContent='Added ✓'; b.disabled=true;
@@ -863,10 +899,11 @@ async function submitReservation(){
   if(!proof){ alert('Please attach proof of payment image.'); return; }
   if(!state.selected.length){ alert('Please add at least one room or cottage.'); return; }
 
-  // Final check that no selected date became occupied while the user was filling the form
+  // Final per-room check: make sure none of the selected rooms became booked while the user was filling the form
+  const finalOcc = currentOccupiedSet();
   for(let d=new Date(state.ciDate); d<=state.coDate; d.setDate(d.getDate()+1)){
-    if(state.occupied.has(ymd(d))){
-      alert('Sorry, one of the dates in your selected range was just booked. Please pick a different range.');
+    if(finalOcc.has(ymd(d))){
+      alert('Sorry, one of the dates in your selected range was just booked for one of your selected rooms/cottages. Please pick a different range or remove the conflicting room.');
       return;
     }
   }
@@ -909,10 +946,14 @@ async function submitReservation(){
     return;
   }
 
-  // Optimistically mark dates as occupied locally so the calendar reflects them
-  for(let d=new Date(state.ciDate); d<=state.coDate; d.setDate(d.getDate()+1)){
-    state.occupied.add(ymd(d));
-  }
+  // Optimistically mark dates as occupied per-room locally so the calendar reflects them
+  if(!state.occupiedByRoom) state.occupiedByRoom = {};
+  state.selected.forEach(sel=>{
+    if(!state.occupiedByRoom[sel.name]) state.occupiedByRoom[sel.name] = new Set();
+    for(let d=new Date(state.ciDate); d<=state.coDate; d.setDate(d.getDate()+1)){
+      state.occupiedByRoom[sel.name].add(ymd(d));
+    }
+  });
   renderCalendar();
 
   if(overlay){ overlay.style.display = 'none'; }
