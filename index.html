@@ -99,8 +99,8 @@ nav.main a.active::after{content:"";position:absolute;left:0;right:0;bottom:-6px
 .amenity:hover img{transform:scale(1.06)}
 .amenity::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.05) 30%,rgba(0,0,0,.85))}
 .amenity .num{position:absolute;top:14px;left:16px;font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:700;z-index:2;color:var(--primary)}
-.amenity .info-i{position:absolute;top:14px;right:14px;width:28px;height:28px;border:1px solid rgba(255,255,255,.6);border-radius:50%;display:grid;place-items:center;font-size:.85rem;z-index:3;cursor:pointer;background:rgba(0,0,0,.25);font-style:italic;font-weight:700;transition:.15s}
-.amenity .info-i:hover{background:var(--primary);border-color:var(--primary);transform:scale(1.1)}
+.amenity .info-i{position:absolute;top:14px;right:14px;width:28px;height:28px;border:1px solid rgba(255,255,255,.7);border-radius:50%;display:grid;place-items:center;font-size:.85rem;z-index:3;cursor:pointer;background:rgba(0,0,0,.35);color:#fff;font-style:italic;font-weight:700;transition:.15s}
+.amenity .info-i:hover{background:var(--primary);border-color:var(--primary);color:#fff;transform:scale(1.1)}
 .amenity-info-card{max-width:520px}
 .amenity-info-card .hero-img{width:100%;aspect-ratio:16/9;object-fit:cover;display:block}
 .amenity-info-card .body{padding:20px 22px 22px}
@@ -371,12 +371,12 @@ footer ul li a:hover{color:var(--primary)}
   <div class="container">
     <div class="head"><h2>Amenities</h2><div class="underline"></div></div>
     <div class="amenities-grid" id="amenitiesGrid">
-      <div class="amenity" data-key="bedrooms"><img src="https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=800&q=80" alt="Bedroom comfort"><span class="num">1</span><button type="button" class="info-i" aria-label="More info">i</button><div class="meta"><h4>Bedrooms and Comfort</h4><p>Cozy, well-furnished rooms with quality linens and serene island views.</p></div></div>
-      <div class="amenity" data-key="beach"><img src="https://images.unsplash.com/photo-1535262971677-13c93decd2d6?w=800&q=80" alt="Snorkeling gear"><span class="num">2</span><button type="button" class="info-i" aria-label="More info">i</button><div class="meta"><h4>Beach Essentials</h4><p>Snorkel sets, life vests and beach gear ready for your island adventure.</p></div></div>
-      <div class="amenity" data-key="bonfire"><img src="https://images.unsplash.com/photo-1475274047050-1d0c0975c63e?w=800&q=80" alt="Bonfire"><span class="num">3</span><button type="button" class="info-i" aria-label="More info">i</button><div class="meta"><h4>Bonfire and Camp</h4><p>Gather around the campfire under starlit skies for unforgettable nights.</p></div></div>
-      <div class="amenity" data-key="karaoke"><img src="https://images.unsplash.com/photo-1518972559570-7cc1309f3229?w=800&q=80" alt="Karaoke night"><span class="num">4</span><button type="button" class="info-i" aria-label="More info">i</button><div class="meta"><h4>Karaoke System</h4><p>Sing your heart out with our karaoke setup — fun for the whole crew.</p></div></div>
-      <div class="amenity" data-key="kitchen"><img src="https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=800&q=80" alt="Kitchen utensils"><span class="num">5</span><button type="button" class="info-i" aria-label="More info">i</button><div class="meta"><h4>Kitchen Utensils</h4><p>Fully equipped kitchen with cookware and dining utensils for your meals.</p></div></div>
-      <div class="amenity" data-key="snorkeling"><img src="https://images.unsplash.com/photo-1530053969600-caed2596d242?w=800&q=80" alt="Snorkeling"><span class="num">6</span><button type="button" class="info-i" aria-label="More info">i</button><div class="meta"><h4>Snorkeling and Activities</h4><p>Discover vibrant marine life and join curated island activities.</p></div></div>
+      <div class="amenity" data-key="bedrooms"><img src="img/amenity-bedrooms.jpg" alt="Bedroom comfort"><span class="num">1</span><button type="button" class="info-i" aria-label="More info">i</button><div class="meta"><h4>Bedrooms and Comfort</h4><p>Cozy, well-furnished rooms with quality linens and serene island views.</p></div></div>
+      <div class="amenity" data-key="beach"><img src="img/amenity-beach.jpg" alt="Beach essentials"><span class="num">2</span><button type="button" class="info-i" aria-label="More info">i</button><div class="meta"><h4>Beach Essentials</h4><p>Snorkel sets, life vests and beach gear ready for your island adventure.</p></div></div>
+      <div class="amenity" data-key="bonfire"><img src="img/amenity-bonfire.jpg" alt="Bonfire and camp"><span class="num">3</span><button type="button" class="info-i" aria-label="More info">i</button><div class="meta"><h4>Bonfire and Camp</h4><p>Gather around the campfire under starlit skies for unforgettable nights.</p></div></div>
+      <div class="amenity" data-key="karaoke"><img src="img/amenity-karaoke.jpg" alt="Karaoke system"><span class="num">4</span><button type="button" class="info-i" aria-label="More info">i</button><div class="meta"><h4>Karaoke System</h4><p>Sing your heart out with our karaoke setup — fun for the whole crew.</p></div></div>
+      <div class="amenity" data-key="kitchen"><img src="img/amenity-kitchen.jpg" alt="Kitchen utensils"><span class="num">5</span><button type="button" class="info-i" aria-label="More info">i</button><div class="meta"><h4>Kitchen Utensils</h4><p>Fully equipped kitchen with cookware and dining utensils for your meals.</p></div></div>
+      <div class="amenity" data-key="snorkeling"><img src="img/amenity-snorkeling.jpg" alt="Snorkeling and activities"><span class="num">6</span><button type="button" class="info-i" aria-label="More info">i</button><div class="meta"><h4>Snorkeling and Activities</h4><p>Discover vibrant marine life and join curated island activities.</p></div></div>
     </div>
   </div>
 </section>
@@ -493,7 +493,7 @@ footer ul li a:hover{color:var(--primary)}
 <!-- Reservation Form -->
 <div class="modal" id="resModal">
   <div class="modal-card">
-    <div class="modal-head"><h3>Reservation Form</h3><button class="x" onclick="closeModal('resModal')">×</button></div>
+    <div class="modal-head"><h3>reservation Form</h3><button class="x" onclick="closeModal('resModal')">×</button></div>
     <div class="modal-body">
       <div class="headline-row">
         <p class="lead" style="margin:0">• Please fill up the details of your Reservation</p>
@@ -614,37 +614,37 @@ mobileMenu.querySelectorAll('a').forEach(a=>a.onclick=closeMenu);
 const AMENITY_INFO = {
   bedrooms:{
     title:'Bedrooms and Comfort',
-    img:'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=1200&q=80',
+    img:'img/amenity-bedrooms.jpg',
     desc:'Our bedrooms are designed as your private sanctuary on Marikaban Island — bright, airy, and styled with warm island touches.',
     list:['Premium mattresses with soft, fresh linens','Air-conditioning and ceiling fans','Blackout curtains for restful sleep','Private bath with hot & cold shower','Charging outlets at the bedside']
   },
   beach:{
     title:'Beach Essentials',
-    img:'https://images.unsplash.com/photo-1535262971677-13c93decd2d6?w=1200&q=80',
+    img:'img/amenity-beach.jpg',
     desc:'Everything you need to enjoy the shoreline is ready when you arrive — no extra trips, no extra packing.',
     list:['Snorkel masks & fins (assorted sizes)','Life vests for kids and adults','Beach mats and floaters','Dry bags & beach umbrellas on request']
   },
   bonfire:{
     title:'Bonfire and Camp',
-    img:'https://images.unsplash.com/photo-1475274047050-1d0c0975c63e?w=1200&q=80',
+    img:'img/amenity-bonfire.jpg',
     desc:'Cap your day with a warm bonfire by the shore — perfect for storytelling, marshmallows, and stargazing.',
     list:['Designated fire pit area','Firewood provided on request','Camp chairs & marshmallow sticks','Available nightly, weather permitting']
   },
   karaoke:{
     title:'Karaoke System',
-    img:'https://images.unsplash.com/photo-1518972559570-7cc1309f3229?w=1200&q=80',
+    img:'img/amenity-karaoke.jpg',
     desc:'Bring out the inner star in your group with our in-house karaoke setup — a guest favorite!',
     list:['High-quality speaker & microphones','Thousands of OPM and English songs','Easy-to-use remote control','Available until 10:00 PM (quiet hours after)']
   },
   kitchen:{
     title:'Kitchen Utensils',
-    img:'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=1200&q=80',
+    img:'img/amenity-kitchen.jpg',
     desc:'Cook your own island feast with a fully equipped shared kitchen — fresh seafood from the local market is just steps away.',
     list:['Gas stove & cooking pans','Plates, bowls, glasses, cutlery','Rice cooker, kettle, basic spices','Dishwashing area with soap & sponge']
   },
   snorkeling:{
     title:'Snorkeling and Activities',
-    img:'https://images.unsplash.com/photo-1530053969600-caed2596d242?w=1200&q=80',
+    img:'img/amenity-snorkeling.jpg',
     desc:'Explore Marikaban\u2019s vibrant reefs and join curated island activities led by friendly local guides.',
     list:['Guided snorkeling tours','Island hopping arrangements','Kayak & paddle rental','Beach games & group activities']
   }
@@ -805,6 +805,41 @@ function parseDateStr(s){
   if((m=s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/))) return new Date(+m[3],+m[1]-1,+m[2]);
   const d=new Date(s); return isNaN(d)?null:d;
 }
+// Parse a "M/D/YYYY H:MM AM/PM" or "YYYY-MM-DD H:MM AM/PM" or date-only string into a Date.
+function parseDateTimeStr(s){
+  if(!s) return null;
+  s = String(s).trim();
+  // Try splitting "<date> <time> AM/PM"
+  const m = s.match(/^(.+?)\s+(\d{1,2}):(\d{2})\s*(AM|PM|am|pm)?\s*$/);
+  if(m){
+    const dPart = m[1].trim();
+    const d = parseDateStr(dPart);
+    if(!d) return null;
+    let h = parseInt(m[2],10);
+    const mi = parseInt(m[3],10);
+    const ap = (m[4]||'').toUpperCase();
+    if(ap==='PM' && h<12) h+=12;
+    if(ap==='AM' && h===12) h=0;
+    d.setHours(h, mi, 0, 0);
+    return d;
+  }
+  // Date-only fallback
+  const d = parseDateStr(s);
+  if(d){ d.setHours(0,0,0,0); return d; }
+  const x = new Date(s); return isNaN(x)?null:x;
+}
+
+// Combine a YYYY-MM-DD date and a "HH:MM" 24h time string into a Date.
+function combineDateTime(d, timeStr){
+  const out = new Date(d.getFullYear(), d.getMonth(), d.getDate(), 0, 0, 0, 0);
+  if(timeStr){
+    const [h,mi] = timeStr.split(':').map(n=>parseInt(n,10));
+    if(!isNaN(h)) out.setHours(h);
+    if(!isNaN(mi)) out.setMinutes(mi);
+  }
+  return out;
+}
+
 async function loadOccupied(){
   try{
     const res = await fetch(SHEET_CSV_URL,{cache:'no-store'});
@@ -814,14 +849,23 @@ async function loadOccupied(){
     const iRoom = head.indexOf('rooms');
     const iIn = head.indexOf('check in');
     const iOut = head.indexOf('check out');
-    // Per-room/cottage occupancy: { "Room Name": Set("YYYY-MM-DD", ...) }
+    // Per-room/cottage occupancy:
+    //  - occupiedByRoom: { "Room Name": Set("YYYY-MM-DD", ...) }  (date-level visual)
+    //  - bookingsByRoom: { "Room Name": [{start:Date,end:Date}, ...] }  (datetime intervals)
     state.occupiedByRoom = {};
+    state.bookingsByRoom = {};
     rows.forEach(r=>{
       const roomName = (r[iRoom]||'').trim();
-      const a=parseDateStr(r[iIn]); const b=parseDateStr(r[iOut]);
+      const a = parseDateTimeStr(r[iIn]);
+      const b = parseDateTimeStr(r[iOut]);
       if(!roomName || !a || !b) return;
       if(!state.occupiedByRoom[roomName]) state.occupiedByRoom[roomName] = new Set();
-      for(let d=new Date(a); d<=b; d.setDate(d.getDate()+1)){
+      if(!state.bookingsByRoom[roomName]) state.bookingsByRoom[roomName] = [];
+      state.bookingsByRoom[roomName].push({start:a, end:b});
+      // Mark each calendar day touched by the booking
+      const dayStart = new Date(a.getFullYear(),a.getMonth(),a.getDate());
+      const dayEnd = new Date(b.getFullYear(),b.getMonth(),b.getDate());
+      for(let d=new Date(dayStart); d<=dayEnd; d.setDate(d.getDate()+1)){
         state.occupiedByRoom[roomName].add(ymd(d));
       }
     });
@@ -841,6 +885,20 @@ function currentOccupiedSet(){
     if(set) set.forEach(d=>out.add(d));
   });
   return out;
+}
+// Check if a proposed [startDt, endDt] datetime range overlaps any existing booking
+// for any of the currently-selected rooms. Returns the conflicting room name, or null.
+function findTimeConflict(startDt, endDt){
+  if(!state.selected || !state.selected.length) return null;
+  const map = state.bookingsByRoom || {};
+  for(const sel of state.selected){
+    const list = map[sel.name] || [];
+    for(const bk of list){
+      // Overlap if start < bk.end AND end > bk.start
+      if(startDt < bk.end && endDt > bk.start) return sel.name;
+    }
+  }
+  return null;
 }
 loadOccupied();
 setInterval(loadOccupied, 60000);
@@ -1006,13 +1064,19 @@ async function submitReservation(){
   if(!proof){ alert('Please attach proof of payment image.'); return; }
   if(!state.selected.length){ alert('Please add at least one room or cottage.'); return; }
 
-  // Final per-room check: make sure none of the selected rooms became booked while the user was filling the form
-  const finalOcc = currentOccupiedSet();
-  for(let d=new Date(state.ciDate); d<=state.coDate; d.setDate(d.getDate()+1)){
-    if(finalOcc.has(ymd(d))){
-      alert('Sorry, one of the dates in your selected range was just booked for one of your selected rooms/cottages. Please pick a different range or remove the conflicting room.');
-      return;
-    }
+  // Final per-room check using datetime overlap so same-day non-overlapping bookings are allowed.
+  const ciTimeVal = document.getElementById('ciTime').value;
+  const coTimeVal = document.getElementById('coTime').value;
+  const startDt = combineDateTime(state.ciDate, ciTimeVal);
+  const endDt   = combineDateTime(state.coDate, coTimeVal);
+  if(endDt <= startDt){
+    alert('Check-Out date/time must be after Check-In date/time.');
+    return;
+  }
+  const conflictRoom = findTimeConflict(startDt, endDt);
+  if(conflictRoom){
+    alert(`Sorry, "${conflictRoom}" is already booked for an overlapping time in your selected range. Please pick a different date/time or remove that room/cottage.`);
+    return;
   }
 
   const reserveBtn = document.getElementById('reserveBtn');
@@ -1053,13 +1117,16 @@ async function submitReservation(){
     return;
   }
 
-  // Optimistically mark dates as occupied per-room locally so the calendar reflects them
+  // Optimistically mark dates + datetime intervals as occupied per-room locally
   if(!state.occupiedByRoom) state.occupiedByRoom = {};
+  if(!state.bookingsByRoom) state.bookingsByRoom = {};
   state.selected.forEach(sel=>{
     if(!state.occupiedByRoom[sel.name]) state.occupiedByRoom[sel.name] = new Set();
+    if(!state.bookingsByRoom[sel.name]) state.bookingsByRoom[sel.name] = [];
     for(let d=new Date(state.ciDate); d<=state.coDate; d.setDate(d.getDate()+1)){
       state.occupiedByRoom[sel.name].add(ymd(d));
     }
+    state.bookingsByRoom[sel.name].push({ start: startDt, end: endDt });
   });
   renderCalendar();
 
