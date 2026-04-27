@@ -783,14 +783,13 @@ async function openReservation(kind,id){
   const list = kind==='room'?ROOMS:COTTAGES;
   const it = list.find(x=>x.id===id);
   if(it) state.selected.push({kind,id,name:it.name,price:it.price});
-  renderSelected();
-  renderCalendar();
-  openModal('resModal');
   // Make sure occupancy data is loaded before the user can pick dates.
   // Without this, on a hard refresh the fetch may not have returned yet,
   // and previously-booked days briefly appear selectable.
   try { await occupiedLoadedPromise; } catch(_){}
+  renderSelected();
   renderCalendar();
+  openModal('resModal');
 }
 
 /* ---------- Sheet load ---------- */
@@ -821,29 +820,43 @@ function ymd(d){
 }
 function parseDateStr(s){
   if(!s) return null;
-  s=s.trim();
+  s=String(s).trim();
   // accept YYYY-MM-DD, M/D/YYYY, D/M/YYYY (assume M/D/YYYY for sheets)
   let m;
   if((m=s.match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/))) return new Date(+m[1],+m[2]-1,+m[3]);
   if((m=s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/))) return new Date(+m[3],+m[1]-1,+m[2]);
   const d=new Date(s); return isNaN(d)?null:d;
 }
+function parseTimeParts(s){
+  if(!s && s!==0) return null;
+  s = String(s).trim();
+  let m = s.match(/^(\d{1,2}):(\d{2})(?::\d{2})?\s*(AM|PM|am|pm)?$/);
+  if(m){
+    let h = parseInt(m[1],10);
+    const mi = parseInt(m[2],10);
+    const ap = (m[3]||'').toUpperCase();
+    if(ap==='PM' && h<12) h+=12;
+    if(ap==='AM' && h===12) h=0;
+    return {h, mi};
+  }
+  if(/^0?\.\d+$/.test(s)){
+    const mins = Math.round(parseFloat(s) * 24 * 60);
+    return {h:Math.floor(mins/60)%24, mi:mins%60};
+  }
+  return null;
+}
 // Parse a "M/D/YYYY H:MM AM/PM" or "YYYY-MM-DD H:MM AM/PM" or date-only string into a Date.
 function parseDateTimeStr(s){
   if(!s) return null;
   s = String(s).trim();
   // Try splitting "<date> <time> AM/PM"
-  const m = s.match(/^(.+?)\s+(\d{1,2}):(\d{2})\s*(AM|PM|am|pm)?\s*$/);
+  const m = s.match(/^(.+?)\s+(\d{1,2}:\d{2}(?::\d{2})?\s*(?:AM|PM|am|pm)?)\s*$/);
   if(m){
     const dPart = m[1].trim();
     const d = parseDateStr(dPart);
     if(!d) return null;
-    let h = parseInt(m[2],10);
-    const mi = parseInt(m[3],10);
-    const ap = (m[4]||'').toUpperCase();
-    if(ap==='PM' && h<12) h+=12;
-    if(ap==='AM' && h===12) h=0;
-    d.setHours(h, mi, 0, 0);
+    const t = parseTimeParts(m[2]);
+    if(t) d.setHours(t.h, t.mi, 0, 0);
     return d;
   }
   // Date-only fallback
@@ -855,11 +868,17 @@ function parseDateTimeStr(s){
 // Combine a YYYY-MM-DD date and a "HH:MM" 24h time string into a Date.
 function combineDateTime(d, timeStr){
   const out = new Date(d.getFullYear(), d.getMonth(), d.getDate(), 0, 0, 0, 0);
-  if(timeStr){
-    const [h,mi] = timeStr.split(':').map(n=>parseInt(n,10));
-    if(!isNaN(h)) out.setHours(h);
-    if(!isNaN(mi)) out.setMinutes(mi);
-  }
+  const t = parseTimeParts(timeStr);
+  if(t) out.setHours(t.h, t.mi, 0, 0);
+  return out;
+}
+
+function combineSheetDateTime(dateStr, timeStr){
+  const d = parseDateStr(dateStr);
+  if(!d) return null;
+  const out = new Date(d.getFullYear(), d.getMonth(), d.getDate(), d.getHours(), d.getMinutes(), 0, 0);
+  const t = parseTimeParts(timeStr);
+  if(t) out.setHours(t.h, t.mi, 0, 0);
   return out;
 }
 
@@ -885,8 +904,8 @@ async function loadOccupied(){
       // back into a Date for occupancy/overlap calculations. Fall back to
       // parsing the Check In / Check Out cell directly for backward
       // compatibility with older rows that stored "<date> <time>".
-      const a = parseDateTimeStr(((r[iDateIn]||'') + ' ' + (r[iIn]||'')).trim()) || parseDateTimeStr(r[iIn]);
-      const b = parseDateTimeStr(((r[iDateOut]||'') + ' ' + (r[iOut]||'')).trim()) || parseDateTimeStr(r[iOut]);
+      const a = combineSheetDateTime(r[iDateIn], r[iIn]) || parseDateTimeStr(r[iIn]) || parseDateTimeStr(r[iDateIn]);
+      const b = combineSheetDateTime(r[iDateOut], r[iOut]) || parseDateTimeStr(r[iOut]) || parseDateTimeStr(r[iDateOut]);
       if(!roomName || !a || !b) return;
       if(!state.occupiedByRoom[roomName]) state.occupiedByRoom[roomName] = new Set();
       if(!state.bookingsByRoom[roomName]) state.bookingsByRoom[roomName] = [];
