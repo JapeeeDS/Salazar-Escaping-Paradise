@@ -528,6 +528,7 @@ footer ul li a:hover{color:var(--primary)}
             <label>Select Check In/Out Dates<span class="required">*</span></label>
             <div class="cal-wrap">
               <div class="cal-head"><button type="button" id="prevMo"><i data-lucide="chevron-left"></i></button><strong id="moLabel"></strong><button type="button" id="nextMo"><i data-lucide="chevron-right"></i></button></div>
+              <div id="calHint" style="font-size:.82rem;color:var(--muted);margin:0 0 8px;padding:8px 10px;background:var(--soft);border-radius:8px;display:none"></div>
               <div class="cal-grid" id="calGrid"></div>
               <div class="legend">
                 <span class="lg"><span class="sw" style="background:var(--primary)"></span>Selected</span>
@@ -925,12 +926,22 @@ async function loadOccupied(){
     console.warn('Could not load sheet',e);
   }
 }
-// Returns the union of ALL booked dates from Google Sheet so a date already
-// occupied anywhere in the sheet cannot be selected again after refresh.
+// Returns the set of booked dates relevant to the current selection.
+//  - If the user has already added one or more rooms/cottages, only the dates
+//    booked for THOSE specific rooms are considered occupied. This way, a date
+//    that's taken for "Room A" doesn't block the user who's reserving "Room B".
+//  - If nothing is selected yet, the calendar shows no occupied dates — the
+//    user is prompted to pick a room first so per-room availability can be
+//    displayed accurately.
 function currentOccupiedSet(){
   const out = new Set();
   const map = state.occupiedByRoom || {};
-  Object.values(map).forEach(set=>set.forEach(d=>out.add(d)));
+  if(state.selected && state.selected.length){
+    state.selected.forEach(sel=>{
+      const set = map[sel.name];
+      if(set) set.forEach(d=>out.add(d));
+    });
+  }
   return out;
 }
 function selectedRangeHasOccupiedDate(){
@@ -973,6 +984,18 @@ function renderCalendar(){
   for(let i=0;i<startDow;i++) html+=`<div class="day empty"></div>`;
   const occSet = currentOccupiedSet();
   const tooltipText = 'Not available — already booked';
+  // Update the per-room availability hint above the calendar
+  const hint = document.getElementById('calHint');
+  if(hint){
+    if(!state.selected || !state.selected.length){
+      hint.style.display = 'block';
+      hint.innerHTML = '💡 Tap <b>Add +</b> to choose a room or cottage first — the calendar will then show only the dates already booked for your selection.';
+    } else {
+      const names = state.selected.map(s=>`<b>${s.name}</b>`).join(', ');
+      hint.style.display = 'block';
+      hint.innerHTML = `Showing date availability for: ${names}`;
+    }
+  }
   for(let d=1; d<=daysIn; d++){
     const dt = new Date(m.getFullYear(),m.getMonth(),d);
     const k = ymd(dt);
