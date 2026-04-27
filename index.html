@@ -8,6 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest"></script>
 <style>
 /* ---------- CONFIG ---------- */
 /* Replace these two URLs to point to YOUR Google Sheet:
@@ -78,6 +79,14 @@ nav.main a.active::after{content:"";position:absolute;left:0;right:0;bottom:-6px
 .feature-strip .items{display:flex;gap:34px;justify-content:center;flex-wrap:wrap;padding:18px 30px}
 .feature-strip .items .it{display:flex;gap:10px;align-items:center;font-size:.95rem}
 .feature-strip .items .ic{width:36px;height:36px;border-radius:50%;background:var(--primary);display:grid;place-items:center;color:#fff;font-weight:700}
+.feature-strip .items .ic svg{width:18px;height:18px}
+.info-list li .ic svg{width:16px;height:16px}
+.amenity .info-i svg{width:14px;height:14px}
+.spec svg{width:14px;height:14px}
+.btn svg{width:16px;height:16px}
+.gal-btn svg{width:22px;height:22px}
+.cal-head button svg{width:18px;height:18px}
+.modal-head .x svg{width:20px;height:20px}
 
 /* ---------- COMFORT SECTION ---------- */
 .comfort{padding:80px 0}
@@ -313,8 +322,8 @@ footer ul li a:hover{color:var(--primary)}
       <a href="#book">Book Now</a>
       <a href="#contact">Contact</a>
     </nav>
-    <button class="btn sm" onclick="document.getElementById('book').scrollIntoView({behavior:'smooth'})">🛏 Reserve a Room</button>
-    <button class="menu-toggle" id="menuToggle" aria-label="Open menu">☰</button>
+    <button class="btn sm" onclick="document.getElementById('book').scrollIntoView({behavior:'smooth'})"><i data-lucide="bed-double"></i> Reserve a Room</button>
+    <button class="menu-toggle" id="menuToggle" aria-label="Open menu"><i data-lucide="menu"></i></button>
   </div>
 </header>
 <div class="backdrop" id="backdrop"></div>
@@ -333,7 +342,7 @@ footer ul li a:hover{color:var(--primary)}
     <div class="eyebrow">Salazar Escaping Paradise</div>
     <h1>Escape to Paradise in <span>Marikaban Island</span></h1>
     <p>Experience island bliss at Salazar Escaping Paradise in Marikaban, Tingloy, Batangas. Crystal-clear waters, pristine beaches, and unforgettable memories await.</p>
-    <button class="btn" onclick="document.getElementById('comfort').scrollIntoView({behavior:'smooth'})">See More ↓</button>
+    <button class="btn" onclick="document.getElementById('comfort').scrollIntoView({behavior:'smooth'})">See More <i data-lucide="arrow-down"></i></button>
   </div>
 </section>
 
@@ -341,9 +350,9 @@ footer ul li a:hover{color:var(--primary)}
 <div class="feature-strip">
   <div class="years"><b>2+</b><span>Years in Service</span></div>
   <div class="items">
-    <div class="it"><div class="ic">⏰</div>Real-time availability</div>
-    <div class="it"><div class="ic">🌊</div>Prime coastal location</div>
-    <div class="it"><div class="ic">😊</div>Friendly, attentive service</div>
+    <div class="it"><div class="ic"><i data-lucide="clock"></i></div>Real-time availability</div>
+    <div class="it"><div class="ic"><i data-lucide="waves"></i></div>Prime coastal location</div>
+    <div class="it"><div class="ic"><i data-lucide="smile"></i></div>Friendly, attentive service</div>
   </div>
 </div>
 
@@ -375,12 +384,12 @@ footer ul li a:hover{color:var(--primary)}
   <div class="container">
     <div class="head"><h2>Amenities</h2><div class="underline"></div></div>
     <div class="amenities-grid" id="amenitiesGrid">
-      <div class="amenity" data-key="bedrooms"><img src="img/amenity-bedrooms.jpg" alt="Bedroom comfort"><span class="num">1</span><button type="button" class="info-i" aria-label="More info">i</button><div class="meta"><h4>Bedrooms and Comfort</h4><p>Cozy, well-furnished rooms with quality linens and serene island views.</p></div></div>
-      <div class="amenity" data-key="beach"><img src="img/amenity-beach.jpg" alt="Beach essentials"><span class="num">2</span><button type="button" class="info-i" aria-label="More info">i</button><div class="meta"><h4>Beach Essentials</h4><p>Snorkel sets, life vests and beach gear ready for your island adventure.</p></div></div>
-      <div class="amenity" data-key="bonfire"><img src="img/amenity-bonfire.jpg" alt="Bonfire and camp"><span class="num">3</span><button type="button" class="info-i" aria-label="More info">i</button><div class="meta"><h4>Bonfire and Camp</h4><p>Gather around the campfire under starlit skies for unforgettable nights.</p></div></div>
-      <div class="amenity" data-key="karaoke"><img src="img/amenity-karaoke.jpg" alt="Karaoke system"><span class="num">4</span><button type="button" class="info-i" aria-label="More info">i</button><div class="meta"><h4>Karaoke System</h4><p>Sing your heart out with our karaoke setup — fun for the whole crew.</p></div></div>
-      <div class="amenity" data-key="kitchen"><img src="img/amenity-kitchen.jpg" alt="Kitchen utensils"><span class="num">5</span><button type="button" class="info-i" aria-label="More info">i</button><div class="meta"><h4>Kitchen Utensils</h4><p>Fully equipped kitchen with cookware and dining utensils for your meals.</p></div></div>
-      <div class="amenity" data-key="snorkeling"><img src="img/amenity-snorkeling.jpg" alt="Snorkeling and activities"><span class="num">6</span><button type="button" class="info-i" aria-label="More info">i</button><div class="meta"><h4>Snorkeling and Activities</h4><p>Discover vibrant marine life and join curated island activities.</p></div></div>
+      <div class="amenity" data-key="bedrooms"><img src="img/amenity-bedrooms.jpg" alt="Bedroom comfort"><span class="num">1</span><button type="button" class="info-i" aria-label="More info"><i data-lucide="info"></i></button><div class="meta"><h4>Bedrooms and Comfort</h4><p>Cozy, well-furnished rooms with quality linens and serene island views.</p></div></div>
+      <div class="amenity" data-key="beach"><img src="img/amenity-beach.jpg" alt="Beach essentials"><span class="num">2</span><button type="button" class="info-i" aria-label="More info"><i data-lucide="info"></i></button><div class="meta"><h4>Beach Essentials</h4><p>Snorkel sets, life vests and beach gear ready for your island adventure.</p></div></div>
+      <div class="amenity" data-key="bonfire"><img src="img/amenity-bonfire.jpg" alt="Bonfire and camp"><span class="num">3</span><button type="button" class="info-i" aria-label="More info"><i data-lucide="info"></i></button><div class="meta"><h4>Bonfire and Camp</h4><p>Gather around the campfire under starlit skies for unforgettable nights.</p></div></div>
+      <div class="amenity" data-key="karaoke"><img src="img/amenity-karaoke.jpg" alt="Karaoke system"><span class="num">4</span><button type="button" class="info-i" aria-label="More info"><i data-lucide="info"></i></button><div class="meta"><h4>Karaoke System</h4><p>Sing your heart out with our karaoke setup — fun for the whole crew.</p></div></div>
+      <div class="amenity" data-key="kitchen"><img src="img/amenity-kitchen.jpg" alt="Kitchen utensils"><span class="num">5</span><button type="button" class="info-i" aria-label="More info"><i data-lucide="info"></i></button><div class="meta"><h4>Kitchen Utensils</h4><p>Fully equipped kitchen with cookware and dining utensils for your meals.</p></div></div>
+      <div class="amenity" data-key="snorkeling"><img src="img/amenity-snorkeling.jpg" alt="Snorkeling and activities"><span class="num">6</span><button type="button" class="info-i" aria-label="More info"><i data-lucide="info"></i></button><div class="meta"><h4>Snorkeling and Activities</h4><p>Discover vibrant marine life and join curated island activities.</p></div></div>
     </div>
   </div>
 </section>
@@ -391,8 +400,8 @@ footer ul li a:hover{color:var(--primary)}
     <div class="head"><h2>Gallery</h2><div class="underline"></div></div>
     <div class="stage">
       <img id="galImg" src="" alt="Resort gallery image">
-      <button class="gal-btn prev" id="galPrev" aria-label="Previous">‹</button>
-      <button class="gal-btn next" id="galNext" aria-label="Next">›</button>
+      <button class="gal-btn prev" id="galPrev" aria-label="Previous"><i data-lucide="chevron-left"></i></button>
+      <button class="gal-btn next" id="galNext" aria-label="Next"><i data-lucide="chevron-right"></i></button>
     </div>
     <div class="thumbs" id="thumbs"></div>
     <div class="dots" id="dots"></div>
@@ -432,13 +441,13 @@ footer ul li a:hover{color:var(--primary)}
     <div class="contact-grid">
       <div class="profiles">
         <div class="person">
-          <div class="avatar"><img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&q=80" alt="Juan Dela Cruz"><span class="fb">f</span></div>
+          <div class="avatar"><img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&q=80" alt="Juan Dela Cruz"><span class="fb"><i data-lucide="facebook" style="width:14px;height:14px"></i></span></div>
           <h4>Juan Dela Cruz</h4>
           <div class="num">+63 912 345 6789</div>
           <button class="btn sm" onclick="openFB()">Message</button>
         </div>
         <div class="person">
-          <div class="avatar"><img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=300&q=80" alt="Maria Mercedez"><span class="fb">f</span></div>
+          <div class="avatar"><img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=300&q=80" alt="Maria Mercedez"><span class="fb"><i data-lucide="facebook" style="width:14px;height:14px"></i></span></div>
           <h4>Maria Mercedez</h4>
           <div class="num">+63 912 345 6789</div>
           <button class="btn sm" onclick="openFB()">Message</button>
@@ -448,9 +457,9 @@ footer ul li a:hover{color:var(--primary)}
         <h3>Get in Touch</h3>
         <p>We're here to help and answer any question you might have. We look forward to hearing from you.</p>
         <ul class="info-list">
-          <li><span class="ic">📞</span><span>+63 912 345 6789</span></li>
-          <li><span class="ic">✉️</span><span>salazar.escapingparadise@gmail.com</span></li>
-          <li><span class="ic">📍</span><span>Marikaban, Tingloy, Batangas</span></li>
+          <li><span class="ic"><i data-lucide="phone"></i></span><span>+63 912 345 6789</span></li>
+          <li><span class="ic"><i data-lucide="mail"></i></span><span>salazar.escapingparadise@gmail.com</span></li>
+          <li><span class="ic"><i data-lucide="map-pin"></i></span><span>Marikaban, Tingloy, Batangas</span></li>
         </ul>
         <div class="map">
           <iframe loading="lazy" src="https://www.google.com/maps?q=Tingloy,Batangas&output=embed"></iframe>
@@ -484,7 +493,7 @@ footer ul li a:hover{color:var(--primary)}
           <li>+63 912 345 6789</li>
           <li>salazar.escapingparadise@gmail.com</li>
           <li>Marikaban, Tingloy, Batangas</li>
-          <li style="margin-top:8px"><a href="javascript:openFB()" style="background:#1877F2;color:#fff;width:30px;height:30px;border-radius:50%;display:inline-grid;place-items:center;font-weight:700">f</a></li>
+          <li style="margin-top:8px"><a href="javascript:openFB()" style="background:#1877F2;color:#fff;width:30px;height:30px;border-radius:50%;display:inline-grid;place-items:center;font-weight:700"><i data-lucide="facebook" style="width:14px;height:14px"></i></a></li>
         </ul>
       </div>
       <div class="years-badge"><div class="circle">2+</div><div><b style="display:block">Years</b><span style="font-size:.8rem">in Service</span></div></div>
@@ -497,13 +506,13 @@ footer ul li a:hover{color:var(--primary)}
 <!-- Reservation Form -->
 <div class="modal" id="resModal">
   <div class="modal-card">
-    <div class="modal-head"><h3>reservation Form</h3><button class="x" onclick="closeModal('resModal')">×</button></div>
+    <div class="modal-head"><h3>Reservation Form</h3><button class="x" onclick="closeModal('resModal')"><i data-lucide="x"></i></button></div>
     <div class="modal-body">
       <div class="headline-row">
         <p class="lead" style="margin:0">• Please fill up the details of your Reservation</p>
         <button class="add-btn" onclick="openAddModal()">Add +</button>
       </div>
-      <div class="note"><span class="t">⚠ Please Note</span><strong>₱100.00</strong> Reservation Fee &nbsp; <span class="danger">Non-Refundable if Cancelled.</span> &nbsp; <strong style="color:var(--primary)">GCASH:</strong> 09123456789 &nbsp; JUAN D.</div>
+      <div class="note"><span class="t"><i data-lucide="alert-triangle" style="width:14px;height:14px;vertical-align:-2px"></i> Please Note</span><strong>₱100.00</strong> Reservation Fee &nbsp; <span class="danger">Non-Refundable if Cancelled.</span> &nbsp; <strong style="color:var(--primary)">GCASH:</strong> 09123456789 &nbsp; JUAN D.</div>
 
       <div class="form-grid">
         <div>
@@ -518,7 +527,7 @@ footer ul li a:hover{color:var(--primary)}
           <div class="field">
             <label>Select Check In/Out Dates<span class="required">*</span></label>
             <div class="cal-wrap">
-              <div class="cal-head"><button type="button" id="prevMo">‹</button><strong id="moLabel"></strong><button type="button" id="nextMo">›</button></div>
+              <div class="cal-head"><button type="button" id="prevMo"><i data-lucide="chevron-left"></i></button><strong id="moLabel"></strong><button type="button" id="nextMo"><i data-lucide="chevron-right"></i></button></div>
               <div class="cal-grid" id="calGrid"></div>
               <div class="legend">
                 <span class="lg"><span class="sw" style="background:var(--primary)"></span>Selected</span>
@@ -555,7 +564,7 @@ footer ul li a:hover{color:var(--primary)}
 <!-- Add Room/Cottage Modal -->
 <div class="modal" id="addModal">
   <div class="modal-card">
-    <div class="modal-head"><h3 id="addTitle">Add Room</h3><button class="x" onclick="closeModal('addModal')">×</button></div>
+    <div class="modal-head"><h3 id="addTitle">Add Room</h3><button class="x" onclick="closeModal('addModal')"><i data-lucide="x"></i></button></div>
     <div class="modal-body">
       <p style="margin:0 0 8px;font-weight:600;color:#444;font-size:.9rem">SELECT ROOM</p>
       <div class="tabs" style="margin-top:0">
@@ -575,7 +584,7 @@ footer ul li a:hover{color:var(--primary)}
 <!-- Success modal -->
 <div class="modal" id="okModal">
   <div class="modal-card success">
-    <div class="check">✓</div>
+    <div class="check"><i data-lucide="check" style="width:38px;height:38px"></i></div>
     <h3>Thank You For Choosing Us</h3>
     <p>We will verify your reservation shortly, please wait for our text or email confirmation message. Thanks!</p>
     <button class="btn" onclick="closeModal('okModal')">Okay</button>
@@ -585,7 +594,7 @@ footer ul li a:hover{color:var(--primary)}
 <!-- Amenity Info modal -->
 <div class="modal" id="amenityModal">
   <div class="modal-card amenity-info-card">
-    <div class="modal-head"><h3 id="amTitle">Amenity</h3><button class="x" onclick="closeModal('amenityModal')">×</button></div>
+    <div class="modal-head"><h3 id="amTitle">Amenity</h3><button class="x" onclick="closeModal('amenityModal')"><i data-lucide="x"></i></button></div>
     <img id="amImg" class="hero-img" src="" alt="">
     <div class="body">
       <h3 id="amHeading"></h3>
@@ -707,8 +716,8 @@ const COTTAGES = [
 
 function cardHTML(it,kind,btnLabel='Reserve'){
   const specs = kind==='room'
-    ? `<span class="spec">👥 ${it.pax} Pax</span><span class="spec dark">🛏 ${it.bedrooms} Bedroom</span>`
-    : `<span class="spec">👥 ${it.pax} Pax</span><span class="spec dark">🪑 ${it.extra}</span>`;
+    ? `<span class="spec"><i data-lucide="users"></i> ${it.pax} Pax</span><span class="spec dark"><i data-lucide="bed-double"></i> ${it.bedrooms} Bedroom</span>`
+    : `<span class="spec"><i data-lucide="users"></i> ${it.pax} Pax</span><span class="spec dark"><i data-lucide="armchair"></i> ${it.extra}</span>`;
   return `<div class="card">
     <div class="img"><span class="badge">Available</span><img src="${it.img}" alt="${it.name}" loading="lazy"></div>
     <div class="body">
@@ -727,6 +736,7 @@ function renderInventory(){
   document.querySelectorAll('[data-act="reserve"]').forEach(b=>{
     b.onclick=()=>{ openReservation(b.dataset.kind, b.dataset.id); };
   });
+  if(window.lucide) lucide.createIcons();
 }
 renderInventory();
 
@@ -884,16 +894,22 @@ async function loadOccupied(){
     console.warn('Could not load sheet',e);
   }
 }
-// Returns a Set of dates occupied by the rooms/cottages the user has currently selected.
-// If nothing is selected yet, no dates are blocked (calendar is fully open).
+// Returns a Set of dates that should be blocked on the calendar.
+// If the user has selected rooms/cottages, only those rooms' booked dates are
+// blocked (so they can still book a different room on the same day).
+// If nothing is selected yet, the union of ALL booked dates is blocked so the
+// user cannot pick a date that is already occupied in the sheet.
 function currentOccupiedSet(){
   const out = new Set();
-  if(!state.selected || !state.selected.length) return out;
   const map = state.occupiedByRoom || {};
-  state.selected.forEach(sel=>{
-    const set = map[sel.name];
-    if(set) set.forEach(d=>out.add(d));
-  });
+  if(state.selected && state.selected.length){
+    state.selected.forEach(sel=>{
+      const set = map[sel.name];
+      if(set) set.forEach(d=>out.add(d));
+    });
+  } else {
+    Object.values(map).forEach(set=>set.forEach(d=>out.add(d)));
+  }
   return out;
 }
 // Check if a proposed [startDt, endDt] datetime range overlaps any existing booking
@@ -991,7 +1007,7 @@ function renderSelected(){
   if(!state.selected.length){
     tbody.innerHTML = `<tr><td class="empty" colspan="3">No rooms selected yet. Tap <b>Add +</b> above.</td></tr>`;
   } else {
-    tbody.innerHTML = state.selected.map((s,i)=>`<tr><td>${s.name}</td><td>₱${s.price.toFixed(2)}</td><td style="text-align:right"><button class="rm" data-i="${i}" title="Remove">🗑</button></td></tr>`).join('');
+    tbody.innerHTML = state.selected.map((s,i)=>`<tr><td>${s.name}</td><td>₱${s.price.toFixed(2)}</td><td style="text-align:right"><button class="rm" data-i="${i}" title="Remove"><i data-lucide="trash-2" style="width:16px;height:16px"></i></button></td></tr>`).join('');
     tbody.querySelectorAll('.rm').forEach(b=>b.onclick=()=>{
       state.selected.splice(+b.dataset.i,1);
       renderSelected();
@@ -1001,6 +1017,7 @@ function renderSelected(){
   document.getElementById('selTotal').textContent = '₱'+state.selected.reduce((s,x)=>s+x.price,0).toFixed(2);
   // Re-render calendar so per-room occupied dates reflect current selection
   renderCalendar();
+  if(window.lucide) lucide.createIcons();
 }
 
 /* ---------- Add Room/Cottage modal ---------- */
@@ -1023,6 +1040,7 @@ function renderAddCards(which){
   const list = which==='rooms'?ROOMS:COTTAGES;
   const kind = which==='rooms'?'room':'cottage';
   document.getElementById('addCards').innerHTML = list.map(it=>cardHTML(it,kind,'Add')).join('');
+  if(window.lucide) lucide.createIcons();
   document.querySelectorAll('#addCards [data-act="add"]').forEach(b=>{
     b.onclick=()=>{
       const it = (b.dataset.kind==='room'?ROOMS:COTTAGES).find(x=>x.id===b.dataset.id);
@@ -1165,5 +1183,6 @@ async function submitReservation(){
   <div style="margin-top:14px;font-size:1rem;letter-spacing:.3px;">Processing your reservation…</div>
 </div>
 <style>@keyframes spin{to{transform:rotate(360deg)}}</style>
+<script>if(window.lucide) lucide.createIcons();</script>
 </body>
 </html>
