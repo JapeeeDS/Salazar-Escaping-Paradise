@@ -769,11 +769,15 @@ const state = {
   occupied:new Set(), // 'YYYY-MM-DD'
   viewMonth: new Date(new Date().getFullYear(), new Date().getMonth(), 1)
 };
+// Promise that resolves once the Google Sheet occupancy data has been loaded
+// at least once. Used so the calendar never opens before we know which dates
+// are already booked (otherwise occupied dates briefly look available on refresh).
+let occupiedLoadedPromise = null;
 
 function openModal(id){document.getElementById(id).classList.add('show')}
 function closeModal(id){document.getElementById(id).classList.remove('show')}
 
-function openReservation(kind,id){
+async function openReservation(kind,id){
   // pre-add the clicked item
   state.selected = [];
   const list = kind==='room'?ROOMS:COTTAGES;
@@ -782,6 +786,11 @@ function openReservation(kind,id){
   renderSelected();
   renderCalendar();
   openModal('resModal');
+  // Make sure occupancy data is loaded before the user can pick dates.
+  // Without this, on a hard refresh the fetch may not have returned yet,
+  // and previously-booked days briefly appear selectable.
+  try { await occupiedLoadedPromise; } catch(_){}
+  renderCalendar();
 }
 
 /* ---------- Sheet load ---------- */
@@ -926,8 +935,8 @@ function findTimeConflict(startDt, endDt){
   }
   return null;
 }
-loadOccupied();
-setInterval(loadOccupied, 60000);
+occupiedLoadedPromise = loadOccupied();
+setInterval(()=>{ occupiedLoadedPromise = loadOccupied(); }, 60000);
 
 /* ---------- Calendar ---------- */
 function renderCalendar(){
