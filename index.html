@@ -907,6 +907,33 @@ function combineSheetDateTime(dateStr, timeStr){
   return out;
 }
 
+function padReservationNumber(num){
+  return String(num).padStart(4,'0');
+}
+
+async function getNextReservationIds(count){
+  const csvUrl = SHEET_CSV_URL + (SHEET_CSV_URL.includes('?') ? '&' : '?') + '_id=' + Date.now();
+  const res = await fetch(csvUrl,{cache:'no-store', headers:{'Cache-Control':'no-cache'}});
+  if(!res.ok) throw new Error('Could not read sheet for ID generation.');
+  const txt = await res.text();
+  const rows = parseCSV(txt).filter(r=>r.length);
+  if(!rows.length) return Array.from({length:count}, (_,i)=>`SEP-AA${padReservationNumber(i+1)}`);
+
+  const headers = rows.shift().map(h=>String(h).trim().toLowerCase());
+  const idIndex = headers.indexOf('id');
+  let maxNumber = 0;
+
+  if(idIndex >= 0){
+    rows.forEach(r=>{
+      const raw = String(r[idIndex] || '').trim();
+      const m = raw.match(/^SEP-AA(\d+)$/i);
+      if(m) maxNumber = Math.max(maxNumber, parseInt(m[1],10) || 0);
+    });
+  }
+
+  return Array.from({length:count}, (_,i)=>`SEP-AA${padReservationNumber(maxNumber + i + 1)}`);
+}
+
 async function loadOccupied(){
   try{
     const csvUrl = SHEET_CSV_URL + (SHEET_CSV_URL.includes('?') ? '&' : '?') + '_=' + Date.now();
@@ -1217,7 +1244,19 @@ async function submitReservation(){
   if(reserveBtn){ reserveBtn.disabled = true; reserveBtn.textContent = 'Processing…'; }
   if(overlay){ overlay.style.display = 'flex'; }
 
-  const rows = state.selected.map(s=>({
+  let reservationIds;
+  try{
+    reservationIds = await getNextReservationIds(state.selected.length);
+  }catch(err){
+    console.error('ID generation failed:', err);
+    alert('Could not generate a reservation ID. Please try again.');
+    if(overlay){ overlay.style.display = 'none'; }
+    if(reserveBtn){ reserveBtn.disabled = false; reserveBtn.textContent = 'Reserve'; }
+    return;
+  }
+
+  const rows = state.selected.map((s,index)=>({
+    ID: reservationIds[index],
     Rooms: s.name,
     'Date In':  state.ciDate.toLocaleDateString(),
     'Check In': to12h(document.getElementById('ciTime').value),
@@ -1229,6 +1268,7 @@ async function submitReservation(){
     Address: document.getElementById('fAddress').value,
     File: '', // Apps Script will replace this with =IMAGE(driveUrl) after uploading the proof
     Status: 'Pending',
+    Accomodated: 'No',
     Accommodated: 'No'
   }));
 
