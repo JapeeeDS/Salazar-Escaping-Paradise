@@ -1227,7 +1227,9 @@ async function submitReservation(){
     Mobile: document.getElementById('fMobile').value,
     Email: document.getElementById('fEmail').value,
     Address: document.getElementById('fAddress').value,
-    File: '' // Apps Script will replace this with =IMAGE(driveUrl) after uploading the proof
+    File: '', // Apps Script will replace this with =IMAGE(driveUrl) after uploading the proof
+    Status: 'Pending',
+    Accommodated: 'No'
   }));
 
   // Send to Google Sheet via Apps Script (image is uploaded to Drive and inserted as =IMAGE())
